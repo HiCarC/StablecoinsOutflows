@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from 'react';
 
 type Theme = 'light' | 'dark';
 
@@ -7,21 +7,71 @@ interface ThemeContextType {
   toggleTheme: () => void;
 }
 
+const STORAGE_KEY = 'theme';
+
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
-export function ThemeProvider({ children }: { children: React.ReactNode }) {
+function getSystemTheme(): Theme {
+  if (typeof window === 'undefined') {
+    return 'light';
+  }
+  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+}
+
+function applyTheme(theme: Theme) {
+  if (typeof document === 'undefined') {
+    return;
+  }
+  const root = document.documentElement;
+  root.classList.toggle('dark', theme === 'dark');
+  root.setAttribute('data-theme', theme);
+}
+
+export function ThemeProvider({ children }: { children: ReactNode }) {
+  const storedValue = typeof window !== 'undefined' ? window.localStorage.getItem(STORAGE_KEY) : null;
+  const hasStoredPreference = storedValue === 'light' || storedValue === 'dark';
+  const initialTheme = hasStoredPreference ? (storedValue as Theme) : getSystemTheme();
+
   const [theme, setTheme] = useState<Theme>(() => {
-    const saved = localStorage.getItem('theme');
-    return (saved as Theme) || 'light';
+    if (typeof document !== 'undefined') {
+      applyTheme(initialTheme);
+    }
+    return initialTheme;
   });
 
+  const userPreferenceRef = useRef<boolean>(hasStoredPreference);
+
   useEffect(() => {
-    localStorage.setItem('theme', theme);
-    document.documentElement.classList.toggle('dark', theme === 'dark');
+    applyTheme(theme);
+    if (typeof window !== 'undefined') {
+      if (userPreferenceRef.current) {
+        window.localStorage.setItem(STORAGE_KEY, theme);
+      } else {
+        window.localStorage.removeItem(STORAGE_KEY);
+      }
+    }
   }, [theme]);
 
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const handleChange = (event: MediaQueryListEvent) => {
+      if (userPreferenceRef.current) {
+        return;
+      }
+      setTheme(event.matches ? 'dark' : 'light');
+    };
+
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
+  }, []);
+
   const toggleTheme = () => {
-    setTheme(prev => prev === 'light' ? 'dark' : 'light');
+    userPreferenceRef.current = true;
+    setTheme(previous => (previous === 'light' ? 'dark' : 'light'));
   };
 
   return (

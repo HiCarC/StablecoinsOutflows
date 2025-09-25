@@ -1,13 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
-import { sankey } from 'd3-sankey';
-
-interface StablecoinFlow {
-  source: string;
-  target: string;
-  value: number;
-  percentage: number;
-}
+import {
+  sankey,
+  sankeyJustify,
+  sankeyLinkHorizontal,
+  SankeyLink,
+  SankeyNode,
+} from 'd3-sankey';
+import { StablecoinFlow } from '../types/stablecoin';
 
 interface SankeyDiagramProps {
   data: StablecoinFlow[];
@@ -16,9 +16,44 @@ interface SankeyDiagramProps {
   onHeightChange?: (height: number) => void;
 }
 
-interface SankeyData {
-  nodes: Array<{ name: string; type: 'stablecoin' | 'protocol' }>;
-  links: Array<{ source: string; target: string; value: number; percentage: number }>;
+type NodeType = 'stablecoin' | 'protocol';
+
+interface SankeyNodeDatum {
+  name: string;
+  type: NodeType;
+}
+
+type SankeyLinkDatum = StablecoinFlow;
+
+type SankeyGraphNode = SankeyNode<SankeyNodeDatum, SankeyLinkDatum>;
+type SankeyGraphLink = SankeyLink<SankeyNodeDatum, SankeyLinkDatum>;
+
+const STABLECOIN_COLORS: Record<string, string> = {
+  USDT: '#26a17b',
+  USDC: '#2775ca',
+  DAI: '#f5ac37',
+  BUSD: '#f0b90b',
+  TUSD: '#4f46e5',
+};
+
+const BASE_STROKE_OPACITY = 0.45;
+const NODE_CORNER_RADIUS = 5;
+const LABEL_OFFSET = 14;
+
+function extractName(entity: unknown): string {
+  if (!entity) {
+    return '';
+  }
+
+  if (typeof entity === 'string') {
+    return entity;
+  }
+
+  if (typeof entity === 'object' && 'name' in entity && typeof (entity as { name: unknown }).name === 'string') {
+    return (entity as { name: string }).name;
+  }
+
+  return '';
 }
 
 export function SankeyDiagram({ data, loading, error, onHeightChange }: SankeyDiagramProps) {
@@ -29,18 +64,11 @@ export function SankeyDiagram({ data, loading, error, onHeightChange }: SankeyDi
     const updateDimensions = () => {
       if (svgRef.current?.parentElement && data.length > 0) {
         const { width } = svgRef.current.parentElement.getBoundingClientRect();
-        
-        // Calculate height based on number of unique nodes
         const uniqueNodes = new Set(data.map(d => d.source).concat(data.map(d => d.target))).size;
         const calculatedHeight = Math.max(400, uniqueNodes * 35 + 100);
-        
         const newDimensions = { width: Math.max(800, width - 40), height: calculatedHeight };
         setDimensions(newDimensions);
-        
-        // Notify parent component of height change
-        if (onHeightChange) {
-          onHeightChange(calculatedHeight);
-        }
+        onHeightChange?.(calculatedHeight);
       }
     };
 
@@ -50,212 +78,273 @@ export function SankeyDiagram({ data, loading, error, onHeightChange }: SankeyDi
   }, [data, onHeightChange]);
 
   useEffect(() => {
-    if (!data.length || loading || !svgRef.current) return;
+    if (!data.length || loading || !svgRef.current) {
+      return;
+    }
 
     const svg = d3.select(svgRef.current);
     svg.selectAll('*').remove();
 
     const { width, height } = dimensions;
-    const margin = { top: 20, right: 200, bottom: 20, left: 200 };
+    const margin = { top: 20, right: 220, bottom: 20, left: 220 };
 
     svg.attr('width', width).attr('height', height);
 
-    // Prepare data for Sankey
-    const allNodes = new Set<string>();
-    data.forEach(d => {
-      allNodes.add(d.source);
-      allNodes.add(d.target);
+    const nodeTypeMap = new Map<string, NodeType>();
+    data.forEach(flow => {
+      if (!nodeTypeMap.has(flow.source)) {
+        nodeTypeMap.set(flow.source, 'stablecoin');
+      }
+      if (!nodeTypeMap.has(flow.target)) {
+        nodeTypeMap.set(flow.target, 'protocol');
+      }
     });
 
-    const sankeyData: SankeyData = {
-      nodes: Array.from(allNodes).map(name => ({
-        name,
-        type: data.find(d => d.source === name) ? 'stablecoin' : 'protocol'
-      })),
-      links: data
+    const sankeyData = {
+      nodes: Array.from(nodeTypeMap, ([name, type]) => ({ name, type })) as SankeyNodeDatum[],
+      links: data.map(flow => ({
+        source: flow.source,
+        target: flow.target,
+        value: flow.value,
+        percentage: flow.percentage,
+      })) as SankeyLinkDatum[],
     };
 
-    // Create Sankey generator with better spacing
-    const sankeyGenerator = sankey<any, any>()
-      .nodeId(d => d.name)
-      .nodeWidth(25)
-      .nodePadding(20)
+    const inflowByProtocol = new Map<string, number>();
+    const outflowByStablecoin = new Map<string, number>();
+
+    sankeyData.links.forEach(link => {
+      inflowByProtocol.set(link.target, (inflowByProtocol.get(link.target) ?? 0) + link.value);
+      outflowByStablecoin.set(link.source, (outflowByStablecoin.get(link.source) ?? 0) + link.value);
+    });
+
+    const nodeSortComparator = (a: SankeyNodeDatum, b: SankeyNodeDatum) => {
+      const aType = nodeTypeMap.get(a.name);
+      const bType = nodeTypeMap.get(b.name);
+
+      if (aType === 'protocol' && bType === 'protocol') {
+        return (inflowByProtocol.get(b.name) ?? 0) - (inflowByProtocol.get(a.name) ?? 0);
+      }
+
+      if (aType === 'stablecoin' && bType === 'stablecoin') {
+        return (outflowByStablecoin.get(b.name) ?? 0) - (outflowByStablecoin.get(a.name) ?? 0);
+      }
+
+      if (aType === bType) {
+        return 0;
+      }
+
+      return aType === 'stablecoin' ? -1 : 1;
+    };
+
+    const sankeyGenerator = sankey<SankeyNodeDatum, SankeyLinkDatum>()
+      .nodeId(node => node.name)
+      .nodeAlign(sankeyJustify)
+      .nodeSort((a, b) => nodeSortComparator(a as SankeyNodeDatum, b as SankeyNodeDatum))
+      .nodeWidth(22)
+      .nodePadding(22)
       .extent([[margin.left, margin.top], [width - margin.right, height - margin.bottom]]);
 
-    const { nodes, links } = sankeyGenerator(sankeyData);
+    const graph = sankeyGenerator({
+      nodes: sankeyData.nodes.map(node => ({ ...node })),
+      links: sankeyData.links.map(link => ({ ...link })),
+    });
 
+    const nodes = graph.nodes as SankeyGraphNode[];
+    const links = graph.links as SankeyGraphLink[];
 
-    // Color scale for different stablecoins
-    const stablecoinColors: { [key: string]: string } = {
-      'USDT': '#26a17b',  // Green
-      'USDC': '#2775ca',  // Blue
-      'DAI': '#f5ac37',   // Orange
-      'BUSD': '#f0b90b',  // Yellow
-      'TUSD': '#4f46e5',  // Indigo
+    const fallbackDomain = Array.from(
+      new Set(
+        nodes.map((node, index) => {
+          const name = extractName(node);
+          return name || `node-${index}`;
+        }),
+      ),
+    );
+
+    const fallbackColorScale = d3.scaleOrdinal<string, string>(fallbackDomain, d3.schemeTableau10);
+
+    const resolveNodeColor = (node: SankeyGraphNode) => {
+      const name = extractName(node);
+      return STABLECOIN_COLORS[name] || fallbackColorScale(name);
     };
 
-    // Add links
-    svg.append('g')
+    const resolveLinkColor = (link: SankeyGraphLink) => {
+      const sourceName = extractName(link.source);
+      return STABLECOIN_COLORS[sourceName] || fallbackColorScale(sourceName);
+    };
+
+    const linkPath = sankeyLinkHorizontal<SankeyNodeDatum, SankeyLinkDatum>();
+
+    const linksGroup = svg
+      .append('g')
+      .attr('fill', 'none')
+      .attr('stroke-opacity', BASE_STROKE_OPACITY)
+      .attr('mix-blend-mode', 'multiply');
+
+    const linkSelection = linksGroup
       .selectAll('path')
       .data(links)
       .join('path')
-      .attr('d', (d: any) => {
-        // Create proper Sankey link paths that align with node edges
-        const sourceY = d.y0;
-        const targetY = d.y1;
-        
-        // Use horizontal lines with proper control points for smooth curves
-        const controlX1 = d.source.x1 + (d.target.x0 - d.source.x1) * 0.5;
-        const controlX2 = controlX1;
-        
-        return `M${d.source.x1},${sourceY}C${controlX1},${sourceY} ${controlX2},${targetY} ${d.target.x0},${targetY}`;
-      })
-      .attr('stroke', (d: any) => {
-        // Use stablecoin-specific colors
-        return stablecoinColors[d.source.name] || '#6b7280';
-      })
-      .attr('stroke-opacity', 0.7)
-      .attr('fill', 'none')
-      .attr('stroke-width', (d: any) => Math.max(2, d.width))
-      .on('mouseover', function(event, d: any) {
-        d3.select(this).attr('stroke-opacity', 0.8).attr('stroke-width', Math.max(2, d.width + 1));
-        
-        // Show tooltip
-        const tooltip = svg.append('g')
-          .attr('class', 'tooltip')
-          .style('pointer-events', 'none');
+      .attr('d', linkPath as any)
+      .attr('stroke', link => resolveLinkColor(link))
+      .attr('stroke-width', link => Math.max(1, link.width ?? 0));
 
-        const tooltipBg = tooltip.append('rect')
-          .attr('fill', 'rgba(0, 0, 0, 0.8)')
+    linkSelection
+      .on('mouseover', function (event, link) {
+        d3.select(this)
+          .attr('stroke-opacity', 0.75)
+          .attr('stroke-width', Math.max(2, (link.width ?? 0) + 1));
+
+        svg.select('.tooltip').remove();
+        const tooltip = svg.append('g').attr('class', 'tooltip').style('pointer-events', 'none');
+
+        const tooltipBg = tooltip
+          .append('rect')
+          .attr('fill', 'rgba(17, 24, 39, 0.9)')
           .attr('rx', 4)
           .attr('ry', 4);
 
-        const tooltipText = tooltip.append('text')
-          .attr('fill', 'white')
+        const tooltipText = tooltip
+          .append('text')
+          .attr('fill', '#F9FAFB')
           .attr('font-size', '12px')
           .attr('font-family', 'Arial, sans-serif');
 
-        const text = `${d.source.name} → ${d.target.name}\n$${(d.value / 1e6).toFixed(1)}M (${d.percentage?.toFixed(1) || 0}%)`;
+        const text = `${extractName(link.source)} -> ${extractName(link.target)}\n$${((link.value ?? 0) / 1e6).toFixed(1)}M (${link.percentage?.toFixed(1) ?? '0.0'}%)`;
         tooltipText.text(text);
 
         const textBounds = tooltipText.node()?.getBBox();
         if (textBounds) {
           tooltipBg
-            .attr('x', textBounds.x - 4)
-            .attr('y', textBounds.y - 4)
-            .attr('width', textBounds.width + 8)
-            .attr('height', textBounds.height + 8);
+            .attr('x', textBounds.x - 6)
+            .attr('y', textBounds.y - 6)
+            .attr('width', textBounds.width + 12)
+            .attr('height', textBounds.height + 12);
         }
 
-        tooltip.attr('transform', `translate(${event.pageX - svgRef.current!.getBoundingClientRect().left + 10}, ${event.pageY - svgRef.current!.getBoundingClientRect().top + 10})`);
+        const bounds = svgRef.current!.getBoundingClientRect();
+        tooltip.attr(
+          'transform',
+          `translate(${event.pageX - bounds.left + 12}, ${event.pageY - bounds.top + 12})`,
+        );
       })
-      .on('mouseout', function() {
-        d3.select(this).attr('stroke-opacity', 0.6).attr('stroke-width', (d: any) => Math.max(1, d.width));
+      .on('mouseout', function () {
+        d3.select(this)
+          .attr('stroke-opacity', BASE_STROKE_OPACITY)
+          .attr('stroke-width', link => Math.max(1, (link as SankeyGraphLink).width ?? 0));
         svg.select('.tooltip').remove();
       });
 
-    // Add nodes
-    svg.append('g')
+    const isDarkMode = document.documentElement.classList.contains('dark');
+
+    const nodesGroup = svg.append('g').attr('stroke-linejoin', 'round').attr('stroke-width', 1.2);
+
+    const nodeSelection = nodesGroup
       .selectAll('rect')
       .data(nodes)
       .join('rect')
-      .attr('x', (d: any) => d.x0)
-      .attr('y', (d: any) => d.y0)
-      .attr('height', (d: any) => d.y1 - d.y0)
-      .attr('width', (d: any) => d.x1 - d.x0)
-      .attr('fill', (d: any) => {
-        const nodeData = sankeyData.nodes.find(n => n.name === d.name);
-        if (nodeData?.type === 'stablecoin') {
-          return stablecoinColors[d.name] || '#3B82F6';
-        }
-        return '#10B981'; // Protocol color
-      })
-      .attr('stroke', () => {
-        const isDark = document.documentElement.classList.contains('dark');
-        return isDark ? '#374151' : '#000';
-      })
-      .attr('stroke-width', 1)
-      .on('mouseover', function(event, d: any) {
-        d3.select(this).attr('stroke-width', 2);
-        
-        const tooltip = svg.append('g')
-          .attr('class', 'tooltip')
-          .style('pointer-events', 'none');
+      .attr('x', node => node.x0 ?? 0)
+      .attr('y', node => node.y0 ?? 0)
+      .attr('height', node => Math.max(1, (node.y1 ?? 0) - (node.y0 ?? 0)))
+      .attr('width', node => Math.max(1, (node.x1 ?? 0) - (node.x0 ?? 0)))
+      .attr('rx', NODE_CORNER_RADIUS)
+      .attr('fill', node => resolveNodeColor(node))
+      .attr('fill-opacity', 0.95)
+      .attr('stroke', isDarkMode ? '#1f2937' : '#e5e7eb');
 
-        const tooltipBg = tooltip.append('rect')
-          .attr('fill', 'rgba(0, 0, 0, 0.8)')
+    nodeSelection
+      .append('title')
+      .text(node => `${extractName(node)}\n$${((node.value ?? 0) / 1e6).toFixed(1)}M`);
+
+    nodeSelection
+      .on('mouseover', function (event, node) {
+        d3.select(this).attr('stroke-width', 2);
+
+        svg.select('.tooltip').remove();
+        const tooltip = svg.append('g').attr('class', 'tooltip').style('pointer-events', 'none');
+
+        const tooltipBg = tooltip
+          .append('rect')
+          .attr('fill', 'rgba(17, 24, 39, 0.9)')
           .attr('rx', 4)
           .attr('ry', 4);
 
-        const tooltipText = tooltip.append('text')
-          .attr('fill', 'white')
+        const tooltipText = tooltip
+          .append('text')
+          .attr('fill', '#F9FAFB')
           .attr('font-size', '12px')
           .attr('font-family', 'Arial, sans-serif');
 
-        const nodeData = sankeyData.nodes.find(n => n.name === d.name);
-        const totalValue = d3.sum(links.filter(l => l.source === d || l.target === d), (l: any) => l.value);
-        const text = `${d.name}\nType: ${nodeData?.type || 'unknown'}\nTotal: $${(totalValue / 1e6).toFixed(1)}M`;
-        tooltipText.text(text);
+        const nodeName = extractName(node);
+        const nodeMeta = sankeyData.nodes.find(baseNode => baseNode.name === nodeName);
+        const totalValue = d3.sum(links, link => (link.source === node || link.target === node ? link.value ?? 0 : 0));
+
+        const tooltipLines = [
+          nodeName,
+          `Type: ${nodeMeta?.type ?? 'unknown'}`,
+          `Total: $${(totalValue / 1e6).toFixed(1)}M`,
+        ];
+        tooltipText.text(tooltipLines.join('\n'));
 
         const textBounds = tooltipText.node()?.getBBox();
         if (textBounds) {
           tooltipBg
-            .attr('x', textBounds.x - 4)
-            .attr('y', textBounds.y - 4)
-            .attr('width', textBounds.width + 8)
-            .attr('height', textBounds.height + 8);
+            .attr('x', textBounds.x - 6)
+            .attr('y', textBounds.y - 6)
+            .attr('width', textBounds.width + 12)
+            .attr('height', textBounds.height + 12);
         }
 
-        tooltip.attr('transform', `translate(${event.pageX - svgRef.current!.getBoundingClientRect().left + 10}, ${event.pageY - svgRef.current!.getBoundingClientRect().top + 10})`);
+        const bounds = svgRef.current!.getBoundingClientRect();
+        tooltip.attr(
+          'transform',
+          `translate(${event.pageX - bounds.left + 12}, ${event.pageY - bounds.top + 12})`,
+        );
       })
-      .on('mouseout', function() {
-        d3.select(this).attr('stroke-width', 1);
+      .on('mouseout', function () {
+        d3.select(this).attr('stroke-width', 1.2);
         svg.select('.tooltip').remove();
       });
 
-    // Add labels for left side (stablecoins)
-    svg.append('g')
+    const labelColor = isDarkMode ? '#E5E7EB' : '#111827';
+
+    svg
+      .append('g')
       .selectAll('text')
-      .data(nodes.filter((d: any) => d.x0 < width / 2))
+      .data(nodes.filter(node => (node.x0 ?? 0) < width / 2))
       .join('text')
-      .attr('x', (d: any) => d.x0 - 12)
-      .attr('y', (d: any) => (d.y1 + d.y0) / 2)
+      .attr('x', node => (node.x0 ?? 0) - LABEL_OFFSET)
+      .attr('y', node => ((node.y1 ?? 0) + (node.y0 ?? 0)) / 2)
       .attr('dy', '0.35em')
       .attr('text-anchor', 'end')
       .attr('font-size', '13px')
       .attr('font-weight', '600')
       .attr('font-family', 'Arial, sans-serif')
-      .attr('fill', () => {
-        const isDark = document.documentElement.classList.contains('dark');
-        return isDark ? '#E5E7EB' : '#374151';
-      })
-      .text((d: any) => d.name);
+      .attr('fill', labelColor)
+      .text(node => extractName(node));
 
-    // Add labels for right side (protocols)
-    svg.append('g')
+    svg
+      .append('g')
       .selectAll('text')
-      .data(nodes.filter((d: any) => d.x0 >= width / 2))
+      .data(nodes.filter(node => (node.x0 ?? 0) >= width / 2))
       .join('text')
-      .attr('x', (d: any) => d.x1 + 12)
-      .attr('y', (d: any) => (d.y1 + d.y0) / 2)
+      .attr('x', node => (node.x1 ?? 0) + LABEL_OFFSET)
+      .attr('y', node => ((node.y1 ?? 0) + (node.y0 ?? 0)) / 2)
       .attr('dy', '0.35em')
       .attr('text-anchor', 'start')
       .attr('font-size', '12px')
       .attr('font-weight', '500')
       .attr('font-family', 'Arial, sans-serif')
-      .attr('fill', () => {
-        const isDark = document.documentElement.classList.contains('dark');
-        return isDark ? '#E5E7EB' : '#374151';
-      })
-      .text((d: any) => d.name);
-
+      .attr('fill', labelColor)
+      .text(node => extractName(node));
   }, [data, loading, dimensions]);
 
   if (error) {
     return (
       <div className="flex items-center justify-center h-full">
         <div className="text-center">
-          <div className="text-red-500 text-lg mb-2">⚠️ Error Loading Data</div>
+          <div className="text-red-500 text-lg mb-2">Error Loading Data</div>
           <div className="text-gray-600">{error}</div>
         </div>
       </div>
@@ -277,7 +366,7 @@ export function SankeyDiagram({ data, loading, error, onHeightChange }: SankeyDi
     return (
       <div className="flex items-center justify-center h-full">
         <div className="text-center">
-          <div className="text-gray-500 text-lg mb-2">📊 No Data Available</div>
+          <div className="text-gray-500 text-lg mb-2">No Data Available</div>
           <div className="text-gray-600">No stablecoin flows found for the selected criteria</div>
         </div>
       </div>
@@ -287,28 +376,27 @@ export function SankeyDiagram({ data, loading, error, onHeightChange }: SankeyDi
   return (
     <div className="w-full">
       <svg ref={svgRef} className="w-full h-full" />
-      
-      {/* Legend */}
+
       <div className="mt-4">
         <div className="flex flex-wrap justify-center gap-4 mb-2">
           <div className="flex items-center space-x-2">
-            <div className="w-3 h-3 rounded" style={{ backgroundColor: '#26a17b' }}></div>
+            <div className="w-3 h-3 rounded" style={{ backgroundColor: STABLECOIN_COLORS.USDT }}></div>
             <span className="text-xs text-gray-600 dark:text-gray-400">USDT</span>
           </div>
           <div className="flex items-center space-x-2">
-            <div className="w-3 h-3 rounded" style={{ backgroundColor: '#2775ca' }}></div>
+            <div className="w-3 h-3 rounded" style={{ backgroundColor: STABLECOIN_COLORS.USDC }}></div>
             <span className="text-xs text-gray-600 dark:text-gray-400">USDC</span>
           </div>
           <div className="flex items-center space-x-2">
-            <div className="w-3 h-3 rounded" style={{ backgroundColor: '#f5ac37' }}></div>
+            <div className="w-3 h-3 rounded" style={{ backgroundColor: STABLECOIN_COLORS.DAI }}></div>
             <span className="text-xs text-gray-600 dark:text-gray-400">DAI</span>
           </div>
           <div className="flex items-center space-x-2">
-            <div className="w-3 h-3 rounded" style={{ backgroundColor: '#f0b90b' }}></div>
+            <div className="w-3 h-3 rounded" style={{ backgroundColor: STABLECOIN_COLORS.BUSD }}></div>
             <span className="text-xs text-gray-600 dark:text-gray-400">BUSD</span>
           </div>
           <div className="flex items-center space-x-2">
-            <div className="w-3 h-3 rounded" style={{ backgroundColor: '#4f46e5' }}></div>
+            <div className="w-3 h-3 rounded" style={{ backgroundColor: STABLECOIN_COLORS.TUSD }}></div>
             <span className="text-xs text-gray-600 dark:text-gray-400">TUSD</span>
           </div>
         </div>
