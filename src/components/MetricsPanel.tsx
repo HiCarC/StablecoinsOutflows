@@ -1,4 +1,3 @@
-import React from 'react';
 import { DollarSign, TrendingUp, TrendingDown, Activity } from 'lucide-react';
 
 interface StablecoinFlow {

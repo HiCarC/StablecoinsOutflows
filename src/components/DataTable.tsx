@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { ArrowUpDown, TrendingUp, TrendingDown } from 'lucide-react';
 
 interface StablecoinFlow {

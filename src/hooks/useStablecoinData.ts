@@ -13,10 +13,6 @@ interface StablecoinData {
   lastUpdated: string;
 }
 
-interface UseStablecoinDataProps {
-  timeframe: '1h' | '24h' | '7d' | '30d';
-  selectedStablecoin: string;
-}
 
 export function useStablecoinData(timeframe: string, selectedStablecoin: string) {
   const [data, setData] = useState<StablecoinData | null>(null);
@@ -153,21 +149,21 @@ function getBaseValue(stablecoin: string, protocol: string): number {
 }
 
 // Future implementation for real API integration
-async function fetchRealData(timeframe: string, selectedStablecoin: string): Promise<StablecoinData> {
-  // This would integrate with real APIs like:
-  // - DeFiLlama API for TVL data
-  // - CoinGecko API for market data
-  // - Blockchain explorers (Etherscan, etc.) for transaction data
-  // - DEX aggregators for swap data
-  
-  const defillamaAPI = 'https://api.llama.fi/protocols';
-  const coingeckoAPI = 'https://api.coingecko.com/api/v3';
-  
-  // Example implementation:
-  // const response = await fetch(defillamaAPI);
-  // const protocols = await response.json();
-  
-  // Process and transform the data...
-  
-  throw new Error('Real API integration not implemented yet');
-}
+// async function fetchRealData(): Promise<StablecoinData> {
+//   // This would integrate with real APIs like:
+//   // - DeFiLlama API for TVL data
+//   // - CoinGecko API for market data
+//   // - Blockchain explorers (Etherscan, etc.) for transaction data
+//   // - DEX aggregators for swap data
+//   
+//   const defillamaAPI = 'https://api.llama.fi/protocols';
+//   const coingeckoAPI = 'https://api.coingecko.com/api/v3';
+//   
+//   // Example implementation:
+//   // const response = await fetch(defillamaAPI);
+//   // const protocols = await response.json();
+//   
+//   // Process and transform the data...
+//   
+//   throw new Error('Real API integration not implemented yet');
+// }

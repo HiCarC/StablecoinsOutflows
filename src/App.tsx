@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { SankeyDiagram } from './components/SankeyDiagram';
 import { MetricsPanel } from './components/MetricsPanel';
 import { Header } from './components/Header';
@@ -8,18 +8,7 @@ import { useStablecoinData } from './hooks/useStablecoinData';
 import { ThemeProvider } from './contexts/ThemeContext';
 import './App.css';
 
-interface StablecoinFlow {
-  source: string;
-  target: string;
-  value: number;
-  percentage: number;
-}
 
-interface StablecoinData {
-  flows: StablecoinFlow[];
-  totalValue: number;
-  lastUpdated: string;
-}
 
 function App() {
   const [selectedTimeframe, setSelectedTimeframe] = useState<'1h' | '24h' | '7d' | '30d'>('24h');

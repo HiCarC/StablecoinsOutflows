@@ -1,4 +1,4 @@
-import React, { Component, ErrorInfo, ReactNode } from 'react';
+import { Component, ErrorInfo, ReactNode } from 'react';
 
 interface Props {
   children: ReactNode;
@@ -39,7 +39,7 @@ export class ErrorBoundary extends Component<Props, State> {
               </h3>
               <div className="mt-2 text-sm text-red-700">
                 <p>An error occurred while rendering this component. Please try refreshing the page.</p>
-                {process.env.NODE_ENV === 'development' && this.state.error && (
+                {typeof window !== 'undefined' && window.location.hostname === 'localhost' && this.state.error && (
                   <details className="mt-2">
                     <summary className="cursor-pointer font-medium">Error details</summary>
                     <pre className="mt-2 text-xs bg-red-100 p-2 rounded overflow-auto">

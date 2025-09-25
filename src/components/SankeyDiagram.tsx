@@ -1,6 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
-import { sankey, SankeyLink, SankeyNode } from 'd3-sankey';
+import { sankey } from 'd3-sankey';
 
 interface StablecoinFlow {
   source: string;
@@ -84,10 +84,6 @@ export function SankeyDiagram({ data, loading, error, onHeightChange }: SankeyDi
 
     const { nodes, links } = sankeyGenerator(sankeyData);
 
-    // Color scale
-    const colorScale = d3.scaleOrdinal<string>()
-      .domain(['stablecoin', 'protocol'])
-      .range(['#3B82F6', '#10B981']);
 
     // Color scale for different stablecoins
     const stablecoinColors: { [key: string]: string } = {
@@ -99,7 +95,7 @@ export function SankeyDiagram({ data, loading, error, onHeightChange }: SankeyDi
     };
 
     // Add links
-    const link = svg.append('g')
+    svg.append('g')
       .selectAll('path')
       .data(links)
       .join('path')
@@ -159,7 +155,7 @@ export function SankeyDiagram({ data, loading, error, onHeightChange }: SankeyDi
       });
 
     // Add nodes
-    const node = svg.append('g')
+    svg.append('g')
       .selectAll('rect')
       .data(nodes)
       .join('rect')
@@ -174,7 +170,7 @@ export function SankeyDiagram({ data, loading, error, onHeightChange }: SankeyDi
         }
         return '#10B981'; // Protocol color
       })
-      .attr('stroke', (d: any) => {
+      .attr('stroke', () => {
         const isDark = document.documentElement.classList.contains('dark');
         return isDark ? '#374151' : '#000';
       })
@@ -229,7 +225,7 @@ export function SankeyDiagram({ data, loading, error, onHeightChange }: SankeyDi
       .attr('font-size', '13px')
       .attr('font-weight', '600')
       .attr('font-family', 'Arial, sans-serif')
-      .attr('fill', (d: any) => {
+      .attr('fill', () => {
         const isDark = document.documentElement.classList.contains('dark');
         return isDark ? '#E5E7EB' : '#374151';
       })
@@ -247,7 +243,7 @@ export function SankeyDiagram({ data, loading, error, onHeightChange }: SankeyDi
       .attr('font-size', '12px')
       .attr('font-weight', '500')
       .attr('font-family', 'Arial, sans-serif')
-      .attr('fill', (d: any) => {
+      .attr('fill', () => {
         const isDark = document.documentElement.classList.contains('dark');
         return isDark ? '#E5E7EB' : '#374151';
       })
