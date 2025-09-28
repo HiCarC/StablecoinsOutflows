@@ -57,7 +57,7 @@ export function Header({ filters, navLinks = [] }: HeaderProps) {
                 Stablecoin Flow Intelligence
               </Link>
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                Supervisory dashboard tracking global stablecoin use-cases
+                Dashboard tracking global stablecoin use-cases
               </p>
             </div>
           </div>

@@ -1,10 +1,17 @@
+import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Network, Building2, Workflow, Globe2, CreditCard } from 'lucide-react';
+import {
+  ArrowRight,
+  Building2,
+  CreditCard,
+  Globe2,
+  Network,
+  Workflow,
+  Sparkles,
+  ShieldCheck,
+} from 'lucide-react';
+import { CategorySankey, type CategorySankeyItem } from '../components/CategorySankey';
 import { useCases } from '../data/useCases';
-
-function formatTrillions(value: number): string {
-  return `US$${value.toFixed(1)} T`;
-}
 
 const ICON_MAP = {
   defi: Network,
@@ -14,118 +21,250 @@ const ICON_MAP = {
   payments: CreditCard,
 } as const;
 
+const CATEGORY_BADGE_CLASSES: Record<string, string> = {
+  'defi-protocols': 'bg-indigo-950/60 text-indigo-100 border border-indigo-400/40',
+  'centralised-exchanges': 'bg-blue-800/60 text-blue-50 border border-blue-300/40',
+  'mev-arbitrage': 'bg-sky-600/60 text-sky-50 border border-sky-200/40',
+  'cross-border': 'bg-emerald-700/60 text-emerald-50 border border-emerald-300/50',
+  payments: 'bg-emerald-500/60 text-emerald-50 border border-emerald-200/50',
+};
+
+const TRADING_SLUGS = new Set(['defi-protocols', 'centralised-exchanges', 'mev-arbitrage']);
+
+function formatTrillions(value: number): string {
+  return `US$${value.toFixed(1)}T`;
+}
+
+function formatSettlement(value: number): string {
+  if (value >= 1) {
+    return `US$${value.toFixed(1)}T`;
+  }
+  return `US$${(value * 1000).toFixed(0)}B`;
+}
+
 export function DashboardPage() {
-  const totalTrackedVolume = useCases.reduce((sum, useCase) => sum + useCase.annualisedVolumeUsdTrillions, 0);
+  const categories = useMemo<CategorySankeyItem[]>(() => {
+    return useCases.map(useCase => ({
+      slug: useCase.slug,
+      name: useCase.name,
+      share: useCase.shareOfVolumePercent,
+      annualisedVolume: useCase.annualisedVolumeUsdTrillions,
+      isTrading: TRADING_SLUGS.has(useCase.slug),
+    }));
+  }, []);
+
+  const totalTrackedVolume = useMemo(
+    () => useCases.reduce((sum, useCase) => sum + useCase.annualisedVolumeUsdTrillions, 0),
+    [],
+  );
+
+  const tradingShare = categories
+    .filter(item => item.isTrading)
+    .reduce((sum, item) => sum + item.share, 0);
+  const realEconomyShare = 100 - tradingShare;
+  const tradingVolume = categories
+    .filter(item => item.isTrading)
+    .reduce((sum, item) => sum + item.annualisedVolume, 0);
+  const realEconomyVolume = totalTrackedVolume - tradingVolume;
 
   return (
     <section className="space-y-10">
-      <header className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-8 shadow-sm">
-        <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
-          <div className="max-w-3xl space-y-4">
-            <p className="text-sm uppercase tracking-wider text-blue-600 dark:text-blue-400 font-semibold">Supervisory overview</p>
-            <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white leading-tight">
-              Stablecoin flows: quantifying where digital dollars concentrate after issuance
-            </h1>
-            <p className="text-base text-gray-600 dark:text-gray-300 leading-relaxed">
-              The Artemis, BCG and McKinsey datasets converge on the same conclusion: trading and liquidity provisioning dominate stablecoin utility. This landing view provides the supervisory context?how much value settles in each use case, the operational risks attached, and where to drill down for detailed analytics, policy interpretation and protocol-level evidence.
-            </p>
-          </div>
-          <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-900 rounded-xl px-6 py-4 max-w-xs">
-            <p className="text-xs font-medium text-blue-700 dark:text-blue-300 uppercase tracking-wide">Tracked annual settlement*</p>
-            <p className="text-3xl font-bold text-blue-900 dark:text-blue-100 mt-1">{formatTrillions(totalTrackedVolume)}</p>
-            <p className="text-[11px] text-blue-700/80 dark:text-blue-200/80 mt-2">
-              *Artemis Analytics harmonised dataset (2025). Totals exclude fiat redemption legs.
-            </p>
+      <header className="relative overflow-hidden rounded-3xl border border-slate-300/40 dark:border-slate-700/60 bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 text-white shadow-xl">
+        <div
+          className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(99,102,241,0.35),_transparent_60%)]"
+          aria-hidden
+        />
+        <div className="relative px-8 py-10 md:px-12 md:py-14">
+          <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-10">
+            {/* Left text block */}
+            <div className="max-w-3xl space-y-5">
+              <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1 text-xs font-semibold uppercase tracking-wider text-blue-100">
+                <ShieldCheck className="h-4 w-4" />
+                Overview
+              </span>
+              <h1 className="text-3xl md:text-5xl font-bold leading-tight">
+                Stablecoin flow intelligence for prudential watchdogs
+              </h1>
+              <p className="text-base md:text-lg text-slate-200 leading-relaxed">
+                The report shows that digital dollars overwhelmingly circulate inside trading
+                infrastructure. DeFi protocol liquidity, centralised exchanges and MEV activity
+                together account for {tradingShare.toFixed(1)} % of observed settlement, while
+                cross-border transfers and payments represent the remaining{' '}
+                {realEconomyShare.toFixed(1)} %.
+              </p>
+              <div className="flex flex-wrap gap-4 text-sm text-slate-200">
+                <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1">
+                  <Sparkles className="h-4 w-4" />
+                  Data harmonised from Artemis, BCG, McKinsey and Visa Onchain
+                </span>
+                <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1">
+                  Trading lanes dominate ({formatSettlement(tradingVolume)} vs{' '}
+                  {formatSettlement(realEconomyVolume)} real economy)
+                </span>
+              </div>
+            </div>
+
+            {/* Right stacked cards */}
+            <div className="flex flex-col items-center gap-4">
+              {/* First card */}
+              <div className="w-full rounded-2xl border border-white/15 bg-white/10 px-8 py-6 text-center backdrop-blur">
+                <p className="text-xs uppercase tracking-wide text-blue-100/80">
+                  Reported annual settlement
+                </p>
+                <p className="mt-2 text-4xl font-semibold">
+                  {formatTrillions(totalTrackedVolume)}
+                </p>
+                <p className="mt-3 text-[11px] leading-5 text-blue-100/70">
+                  Harmonised snapshot combining 2024/25 datasets. Figures remain static until the
+                  next report iteration.
+                </p>
+              </div>
+
+              {/* Second card */}
+              <div className="w-full rounded-2xl border border-white/15 bg-white/10 px-8 py-6 text-center backdrop-blur">
+              <p className="text-xs uppercase tracking-wide text-blue-100/80">EUR denominated stablecoins</p>
+              <p className="mt-2 text-4xl font-semibold">&lt;0.16%</p>
+              <p className="mt-3 text-[11px] leading-5 text-blue-100/70">~$477M, 2nd after USD (Oct 2025)</p>
+            </div>
+            </div>
           </div>
         </div>
       </header>
 
+      <section className="grid gap-6 xl:grid-cols-3">
+        <div className="xl:col-span-2 rounded-3xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm">
+          <div className="px-6 py-5 border-b border-gray-200 dark:border-gray-700">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Reported flow distribution</h2>
+            <p className="text-sm text-gray-600 dark:text-gray-300">
+              Only the DeFi drill-down provides live telemetry.
+            </p>
+          </div>
+          <div className="px-4 py-6">
+            <CategorySankey categories={categories} />
+          </div>
+        </div>
+        <div className="rounded-3xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm">
+          <div className="px-6 py-5 border-b border-gray-200 dark:border-gray-700">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Trading versus real economy</h2>
+            <p className="text-sm text-gray-600 dark:text-gray-300">Static view anchored in the published dataset.</p>
+          </div>
+          <div className="px-6 py-6 space-y-5">
+            <div className="rounded-2xl border border-blue-200 bg-blue-50 px-4 py-4 dark:border-blue-900/50 dark:bg-blue-900/20">
+              <p className="text-xs font-semibold uppercase tracking-wide text-blue-800 dark:text-blue-200">Trading use-case share</p>
+              <p className="mt-1 text-2xl font-semibold text-blue-900 dark:text-blue-100">{tradingShare.toFixed(1)} %</p>
+              <p className="mt-1 text-[11px] text-blue-800/80 dark:text-blue-200/70">Includes DeFi protocols, centralised exchanges and MEV activity ({formatSettlement(tradingVolume)} annualised).</p>
+            </div>
+            <div className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-4 dark:border-emerald-900/50 dark:bg-emerald-900/20">
+              <p className="text-xs font-semibold uppercase tracking-wide text-emerald-800 dark:text-emerald-200">Real-economy share</p>
+              <p className="mt-1 text-2xl font-semibold text-emerald-900 dark:text-emerald-100">{realEconomyShare.toFixed(1)} %</p>
+              <p className="mt-1 text-[11px] text-emerald-800/80 dark:text-emerald-200/80">Cross-border transfers and payments channels ({formatSettlement(realEconomyVolume)} annualised).</p>
+            </div>
+            <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 dark:border-slate-800 dark:bg-slate-900/40">
+              <p className="text-xs font-semibold uppercase tracking-wide text-slate-600 dark:text-slate-300">Takeaway</p>
+              <p className="text-sm text-slate-700 dark:text-slate-200 leading-relaxed">
+                Trading infrastructure remains the systemic dependency; real-economy usage is material but comparatively small. Focus prudential reviews on liquidity management at trading venues while cultivating compliant rails for payments and remittances.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
         {useCases.map(useCase => {
           const Icon = ICON_MAP[useCase.icon];
+          const isTrading = TRADING_SLUGS.has(useCase.slug);
+          const badgeClasses = CATEGORY_BADGE_CLASSES[useCase.slug] ?? 'bg-slate-200 text-slate-900';
           return (
             <article
               key={useCase.slug}
-              className="relative bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-6 flex flex-col shadow-sm hover:shadow-md transition-shadow"
+              className="group relative overflow-hidden rounded-3xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm transition-all hover:-translate-y-1 hover:shadow-lg"
             >
-              <div className={`absolute inset-x-0 h-1 rounded-t-2xl bg-gradient-to-r ${useCase.accentClass}`} />
-              <div className="flex items-start justify-between mb-4">
-                <div className="flex items-center gap-3">
-                  <span className="p-2 rounded-xl bg-gray-100 dark:bg-gray-900/60">
-                    <Icon className="h-6 w-6 text-gray-700 dark:text-gray-200" />
-                  </span>
-                  <div>
-                    <h2 className="text-lg font-semibold text-gray-900 dark:text-white">{useCase.name}</h2>
-                    <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">{useCase.highlight}</p>
+              <div className={`absolute inset-0 opacity-90 transition-opacity group-hover:opacity-100 bg-gradient-to-br ${useCase.accentClass}`} aria-hidden />
+              <div className="relative h-full p-6 text-white flex flex-col gap-6">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <span className="rounded-xl bg-white/15 p-3">
+                      <Icon className="h-6 w-6" />
+                    </span>
+                    <div>
+                      <h2 className="text-lg font-semibold tracking-tight">{useCase.name}</h2>
+                      <p className="text-xs uppercase tracking-wide text-white/80">{useCase.highlight}</p>
+                    </div>
+                  </div>
+                  <div className="text-right text-xs font-semibold uppercase tracking-wide space-y-2">
+                    <span className={`inline-flex rounded-full px-2 py-1 ${badgeClasses}`}>
+                      {isTrading ? 'Trading' : 'Real economy'}
+                    </span>
+                    <p className="text-2xl font-semibold">{useCase.shareOfVolumePercent.toFixed(1)}%</p>
                   </div>
                 </div>
-                <div className="text-right">
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Share of flows</p>
-                  <p className="text-xl font-bold text-gray-900 dark:text-white">{useCase.shareOfVolumePercent.toFixed(1)}%</p>
+
+                <p className="text-sm leading-relaxed text-white/85">{useCase.summary}</p>
+
+                <div className="grid grid-cols-2 gap-3 text-sm">
+                  <div className="rounded-2xl bg-white/10 px-3 py-2">
+                    <p className="text-[10px] uppercase tracking-wide text-white/70">Annualised volume</p>
+                    <p className="text-base font-semibold">{formatSettlement(useCase.annualisedVolumeUsdTrillions)}</p>
+                  </div>
+                  <div className="rounded-2xl bg-white/10 px-3 py-2">
+                    <p className="text-[10px] uppercase tracking-wide text-white/70">Share of flows</p>
+                    <p className="text-base font-semibold">{useCase.shareOfVolumePercent.toFixed(1)}%</p>
+                  </div>
                 </div>
-              </div>
 
-              <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
-                {useCase.summary}
-              </p>
+                <ul className="space-y-2 text-sm text-white/85">
+                  {useCase.insightBullets.slice(0, 2).map((bullet, index) => (
+                    <li key={index} className="flex items-start gap-2">
+                      <span className="mt-1 h-1.5 w-1.5 rounded-full bg-white" />
+                      <span>{bullet}</span>
+                    </li>
+                  ))}
+                </ul>
 
-              <div className="grid grid-cols-2 gap-3 text-sm text-gray-700 dark:text-gray-300 mb-4">
-                <div className="bg-gray-50 dark:bg-gray-900/50 rounded-lg p-3">
-                  <p className="text-[11px] font-semibold uppercase text-gray-500 dark:text-gray-400">Annualised volume</p>
-                  <p className="text-base font-bold text-gray-900 dark:text-white">{formatTrillions(useCase.annualisedVolumeUsdTrillions)}</p>
+                <div className="mt-auto">
+                  <Link
+                    to={useCase.route}
+                    className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/20"
+                  >
+                    Explore detail
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
                 </div>
-                <div className="bg-gray-50 dark:bg-gray-900/50 rounded-lg p-3">
-                  <p className="text-[11px] font-semibold uppercase text-gray-500 dark:text-gray-400">Key signal</p>
-                  <p className="text-sm text-gray-700 dark:text-gray-200">{useCase.metrics[0]?.context ?? 'Dataset insight'}</p>
-                </div>
-              </div>
-
-              <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-300 flex-1">
-                {useCase.insightBullets.slice(0, 2).map((bullet, index) => (
-                  <li key={index} className="flex items-start gap-2">
-                    <span className="mt-1 h-1.5 w-1.5 rounded-full bg-blue-500 dark:bg-blue-400 flex-shrink-0" />
-                    <span>{bullet}</span>
-                  </li>
-                ))}
-              </ul>
-
-              <div className="mt-6">
-                <Link
-                  to={useCase.route}
-                  className="inline-flex items-center gap-2 text-sm font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300"
-                >
-                  Explore detail
-                  <ArrowRight className="h-4 w-4" />
-                </Link>
               </div>
             </article>
           );
         })}
       </section>
 
-      <footer className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-6 text-sm text-gray-600 dark:text-gray-300">
-        <h2 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wide mb-3">Supervisory framing</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div>
-            <p className="font-semibold text-gray-800 dark:text-gray-100 mb-2">Trading still dwarfs real economy use</p>
-            <p>
-              BCG and McKinsey estimate that more than three quarters of all stablecoin turnover serves trading, market-making and arbitrage. Payments and remittances remain below 3% of global stablecoin settlement, highlighting the gap between narrative and adoption.
+      <section className="rounded-3xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm">
+        <div className="px-6 py-6 border-b border-gray-200 dark:border-gray-700">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Framing</h2>
+          <p className="text-sm text-gray-600 dark:text-gray-300">Policy narratives tied to the static flow distribution.</p>
+        </div>
+        <div className="px-6 py-6 grid gap-6 md:grid-cols-3">
+          <div className="rounded-2xl border border-blue-200 bg-blue-50 px-5 py-4 dark:border-blue-900/40 dark:bg-blue-900/20">
+            <p className="text-sm font-semibold text-blue-900 dark:text-blue-100 mb-2">Trading still dwarfs real economy use</p>
+            <p className="text-sm text-blue-900/90 dark:text-blue-100/90 leading-relaxed">
+              Reported data shows trading, market-making and arbitrage absorbing nearly {tradingShare.toFixed(1)} % of stablecoin settlement. Payments and remittances remain a thin layer despite rapid growth.
             </p>
           </div>
-          <div>
-            <p className="font-semibold text-gray-800 dark:text-gray-100 mb-2">DeFi liquidity risks are systemic</p>
-            <p>
-              Half of tracked flow concentrates in composable DeFi venues. Supervisors should monitor collateral quality, oracle dependencies and bridge exposures that could impair redemption windows during stress.
+          <div className="rounded-2xl border border-blue-200 bg-blue-50 px-5 py-4 dark:border-blue-900/40 dark:bg-blue-900/20">
+            <p className="text-sm font-semibold text-blue-900 dark:text-blue-100 mb-2">DeFi and CEX venues remain systemic</p>
+            <p className="text-sm text-blue-900/90 dark:text-blue-100/90 leading-relaxed">
+              To assess the systemic risk, it would be useful to monitor the collateral quality, oracle dependencies and operational resilience at DeFi protocols and centralised exchanges where the majority of settlement concentrates.
             </p>
           </div>
-          <div>
-            <p className="font-semibold text-gray-800 dark:text-gray-100 mb-2">Regulation shapes the trajectory</p>
-            <p>
-              The GENIUS Act, MiCA and Asian licensing regimes will decide how quickly payment-grade stablecoins scale. Clear reserve rules could unlock bank-issued tokens, pushing payments share higher over the medium term.
+          <div className="rounded-2xl border border-emerald-200 bg-emerald-50 px-5 py-4 dark:border-emerald-900/40 dark:bg-emerald-900/20">
+            <p className="text-sm font-semibold text-emerald-900 dark:text-emerald-100 mb-2">Real-economy rails need policy support</p>
+            <p className="text-sm text-emerald-900/90 dark:text-emerald-100/90 leading-relaxed">
+              Cross-border transfer and payments adoption is measurable but modest. Regulatory clarity (MiCA, GENIUS Act, Asian regimes) is essential to scale compliant stablecoin payments.
             </p>
           </div>
         </div>
-      </footer>
+      </section>
     </section>
   );
 }
+
+
+

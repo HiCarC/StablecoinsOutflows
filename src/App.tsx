@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { Header } from './components/Header';
 import { DashboardPage } from './pages/DashboardPage';
@@ -10,7 +10,6 @@ import type { StablecoinTimeframe } from './types/stablecoin';
 function AppShell() {
   const [selectedTimeframe, setSelectedTimeframe] = useState<StablecoinTimeframe>('24h');
   const [selectedStablecoin, setSelectedStablecoin] = useState<string>('all');
-  const location = useLocation();
 
   const navLinks = useMemo(
     () => [
@@ -20,23 +19,9 @@ function AppShell() {
     []
   );
 
-  const isDeFiDetail = location.pathname.startsWith('/use-cases/defi-protocols');
-
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <Header
-        navLinks={navLinks}
-        filters={
-          isDeFiDetail
-            ? {
-                selectedTimeframe,
-                setSelectedTimeframe,
-                selectedStablecoin,
-                setSelectedStablecoin,
-              }
-            : undefined
-        }
-      />
+      <Header navLinks={navLinks} />
 
       <main className="container mx-auto px-4 py-8">
         <Routes>
@@ -47,6 +32,8 @@ function AppShell() {
               <UseCaseDetailPage
                 selectedTimeframe={selectedTimeframe}
                 selectedStablecoin={selectedStablecoin}
+                onTimeframeChange={setSelectedTimeframe}
+                onStablecoinChange={setSelectedStablecoin}
               />
             }
           />
@@ -60,7 +47,7 @@ function AppShell() {
 function App() {
   return (
     <ThemeProvider>
-      <BrowserRouter>
+      <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <AppShell />
       </BrowserRouter>
     </ThemeProvider>

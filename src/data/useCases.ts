@@ -81,23 +81,23 @@ export const useCases: UseCaseDefinition[] = [
         title: 'Liquidity backbone for digital assets',
         paragraphs: [
           'DeFi protocols recycle stablecoins across lending pools, derivatives collateral and automated market makers. The scale of flows reflects the demand for synthetic dollars to underwrite leverage and market-making. Large treasuries and professional market makers provide liquidity across Layer-1 and Layer-2 venues, using stablecoins as operational capital.',
-          'Stablecoin velocity within DeFi is amplified by composability: the same token leg can be rehypothecated across lending markets, AMM pools and structured vaults. This loop explains the high share of settlement relative to unique users. Regulatory supervision therefore focuses on collateral quality, oracle governance and liquidity management.',
+          'Stablecoin velocity within DeFi is amplified by composability: the same token leg can be rehypothecated across lending markets, AMM pools and structured vaults. This loop explains the high share of settlement relative to unique users. Supervisors could monitor: collateral quality, oracle governance and liquidity management.',
         ],
       },
       {
-        title: 'Risk considerations for supervisors',
+        title: 'Risk considerations',
         paragraphs: [
-          'Stress in DeFi protocols propagates instantly to stablecoin liquidity. Supervisors monitor collateral mix, utilisation ratios and cross-protocol dependencies to detect fragility. Circuit breakers and dynamic fee switches on leading protocols have reduced reflexivity, but liquidity remains procyclical.',
-          'The supervisory objective is to map critical DeFi venues (Aave, Maker, Curve, Uniswap v3/v4, Pendle, Morpho) and quantify their reliance on specific stablecoins. Cross-chain bridges and L2 sequencers add operational dependencies that must be folded into prudential assessments.',
+          'Stress in DeFi protocols propagates instantly to stablecoin liquidity. Supervisory activity could monitor: collateral mix, utilisation ratios and cross-protocol dependencies to detect fragility. Circuit breakers and dynamic fee switches on leading protocols have reduced reflexivity, but liquidity remains procyclical.',
+          'Critical DeFi venues could be mapped (Aave, Maker, Curve, Uniswap v3/v4, Pendle, Morpho) and quantify their reliance on specific stablecoins. Cross-chain bridges and L2 sequencers add operational dependencies that must be folded into prudential assessments.',
         ],
       },
     ],
     sources: [
-      { label: 'Artemis Analytics ? Stablecoin payments from the ground up (2025)', url: 'reports.artemisanalytics.com' },
-      { label: 'Keyrock ? Stablecoin revenue share (2025)', url: 'keyrock.com' },
-      { label: 'Visa Onchain Analytics ? 2024 dataset', url: 'visaonchainanalytics.com' },
+      { label: 'Artemis Analytics - Stablecoin payments from the ground up (2025)', url: 'reports.artemisanalytics.com' },
+      { label: 'Keyrock - Stablecoin revenue share (2025)', url: 'keyrock.com' },
+      { label: 'Visa Onchain Analytics - 2024 dataset', url: 'visaonchainanalytics.com' },
     ],
-    accentClass: 'from-blue-500 via-sky-500 to-cyan-500',
+    accentClass: 'from-[#3b82f6] via-[#60a5fa] to-[#93c5fd]',
     icon: 'defi',
   },
   {
@@ -120,7 +120,7 @@ export const useCases: UseCaseDefinition[] = [
       {
         label: 'Share of tracked volume',
         value: '27.4 %',
-        context: 'Artemis dataset ? centralised exchange category.',
+        context: 'Artemis dataset - centralised exchange category.',
       },
       {
         label: 'Annualised settlement',
@@ -138,11 +138,11 @@ export const useCases: UseCaseDefinition[] = [
         title: 'Market structure implications',
         paragraphs: [
           'Stablecoins provide the base collateral for crypto derivatives and spot trading pairs across Binance, OKX, Coinbase and Bybit. Order-book liquidity in USDT and USDC enables rapid hedging and basis trades, while internal transfers support cross-exchange arbitrage.',
-          'From a supervisory lens, exchange concentration represents a single point of failure for settlement finality. Monitoring cold-wallet attestations, proof-of-reserve disclosures and fiat redemption channels remains essential for systemic oversight.',
+          'Exchange concentration represents a single point of failure for settlement finality. Monitoring cold-wallet attestations, proof-of-reserve disclosures and fiat redemption channels remains essential for systemic oversight.',
         ],
       },
       {
-        title: 'Linkages with TradFi liquidity',
+        title: 'Linkages with Traditional Finance liquidity',
         paragraphs: [
           'Large exchanges have integrated with prime brokers and banking correspondents to support stablecoin issuance and redemption. Sudden restrictions on fiat rails (e.g., USD banking access) can therefore cascade across the stablecoin ecosystem, tightening spreads and reducing exchange liquidity.',
         ],
@@ -150,10 +150,10 @@ export const useCases: UseCaseDefinition[] = [
     ],
     sources: [
       { label: 'Visa Onchain Analytics (2024)', url: 'visaonchainanalytics.com' },
-      { label: 'Boston Consulting Group ? Stablecoins: five killer tests (2025)', url: 'media-publications.bcg.com' },
+      { label: 'Boston Consulting Group - Stablecoins: five killer tests (2025)', url: 'media-publications.bcg.com' },
       { label: 'a16z State of Crypto (2025)', url: 'a16zcrypto.com' },
     ],
-    accentClass: 'from-amber-500 via-orange-500 to-rose-500',
+    accentClass: 'from-[#1d4ed8] via-[#2563eb] to-[#60a5fa]',
     icon: 'exchange',
   },
   {
@@ -194,22 +194,86 @@ export const useCases: UseCaseDefinition[] = [
         title: 'Operational profile',
         paragraphs: [
           'Searchers maintain inventories of USDT and USDC across bundles of smart contracts. They borrow stablecoins from flash-loan providers or DeFi pools, execute arbitrage trades and repay capital within the same block. This creates high gross settlement figures despite minimal end-of-day balances.',
-          'Supervisors track MEV patterns to evaluate fairness of transaction ordering and identify points where stablecoin liquidity might evaporate during congestion events.',
+          'MEV patterns could be evaluated to assess fairness of transaction ordering and identify points where stablecoin liquidity might evaporate during congestion events.',
         ],
       },
       {
         title: 'Mitigation levers',
         paragraphs: [
-          'Mechanism design responses?proposer-builder separation, encrypted mempools, and inclusion lists?aim to limit negative externalities while preserving the liquidity benefits MEV searchers deliver to DeFi markets.',
+          'Mechanism design responses - proposer-builder separation, encrypted mempools, and inclusion lists - aim to limit negative externalities while preserving the liquidity benefits MEV searchers deliver to DeFi markets.',
         ],
       },
     ],
     sources: [
       { label: 'Artemis Analytics (2025)', url: 'reports.artemisanalytics.com' },
-      { label: 'Flashbots research ? MEV landscape', url: 'flashbots.net' },
+      { label: 'Flashbots research - MEV landscape', url: 'flashbots.net' },
     ],
-    accentClass: 'from-fuchsia-500 via-purple-500 to-indigo-500',
+    accentClass: 'from-[#172554] via-[#1f3072] to-[#2643aa]',
     icon: 'mev',
+  },
+  {
+    slug: 'payments',
+    name: 'Payments & Treasury',
+    route: '/use-cases/payments',
+    headline: 'Genuine commerce payments remain a small but fast-growing share of stablecoin usage, led by B2B settlement networks.',
+    summary:
+      'Payments use cases account for roughly US$1.3 trillion in annualised settlement- about 8% of the on-chain volume captured by Artemis. B2B flows dominate, with payroll, card-linked spending and remittances scaling as compliance-grade infrastructure matures.',
+    type: 'static',
+    shareOfVolumePercent: 8.3,
+    annualisedVolumeUsdTrillions: 1.3,
+    highlight: 'Early traction for programmable commerce rails',
+    insightBullets: [
+      'Artemis survey (2025) records US$94.2 billion of payments between Jan 2023 and Feb 2025, with a run rate of US$72.3 billion per year.',
+      'B2B transactions represent 49.8% of observed payment volume; P2P and card-linked programmes follow at 24.9% and 18.3%.',
+      'Despite growth, payments equal just 0.28% of total stablecoin settlement when benchmarked against BCG\'s US$26.1 trillion volume estimate.',
+    ],
+    metrics: [
+      {
+        label: 'Share of tracked volume',
+        value: '8.3 %',
+        context: 'Artemis payments classification.',
+      },
+      {
+        label: 'Annualised settlement',
+        value: 'US$1.3 T',
+        context: 'Includes B2B, P2P, card-linked, B2C payouts and prefunding.',
+      },
+      {
+        label: 'Verified run rate',
+        value: 'US$72.3 B',
+        context: 'Artemis survey of 31 payment providers (Jan 2025).',
+      },
+    ],
+    paymentBreakdown: [
+      { label: 'B2B payments', runRateUsdBillions: 36.0, shareOfPayments: 49.8, shareOfTotalVolume: 0.14 },
+      { label: 'P2P payments', runRateUsdBillions: 18.0, shareOfPayments: 24.9, shareOfTotalVolume: 0.07 },
+      { label: 'Card-linked spend', runRateUsdBillions: 13.2, shareOfPayments: 18.3, shareOfTotalVolume: 0.05 },
+      { label: 'B2C payouts', runRateUsdBillions: 3.3, shareOfPayments: 4.5, shareOfTotalVolume: 0.013 },
+      { label: 'Prefunding float', runRateUsdBillions: 2.5, shareOfPayments: 3.5, shareOfTotalVolume: 0.010 },
+    ],
+    narrative: [
+      {
+        title: 'Commercial adoption patterns',
+        paragraphs: [
+          'Corporate treasurers experiment with stablecoins for just-in-time payouts and supplier settlement, particularly where treasury teams seek intraday finality. Payroll and gig-economy disbursements leverage stablecoins for weekend settlement and multi-currency coverage.',
+          'Consumer-facing programmes remain niche but improving: card-linked wallets on Solana, Polygon and Base abstract crypto UX via stable-denominated rewards and spend controls.',
+        ],
+      },
+      {
+        title: 'Regulatory runway',
+        paragraphs: [
+          'MiCA licensing (EU) and state-level US frameworks will determine how quickly regulated institutions can launch stablecoin payment services. Requirements around reserve composition, capital buffers and redemption SLAs need harmonisation with card and ACH standards.',
+          'Local NCAs and the US SEC have the role to evaluate how stablecoin payment processors manage AML, sanctions screening and safeguarding of float. Collaboration with commercial banks is crucial to keep settlement flows anchored in supervised entities.',
+        ],
+      },
+    ],
+    sources: [
+      { label: 'Artemis Analytics - Payments survey (2025)', url: 'reports.artemisanalytics.com' },
+      { label: 'Boston Consulting Group (2025)', url: 'media-publications.bcg.com' },
+      { label: 'McKinsey - Stablecoins as payment infrastructure (2025)', url: 'mckinsey.com' },
+    ],
+    accentClass: 'from-[#13f0a0] via-[#079461] to-[#3aa67b]',
+    icon: 'payments',
   },
   {
     slug: 'cross-border',
@@ -248,7 +312,7 @@ export const useCases: UseCaseDefinition[] = [
       {
         title: 'Regulatory perimeter',
         paragraphs: [
-          'Cross-border stablecoin corridors raise AML/CFT considerations. Supervisors assess VASP licensing, travel-rule compliance and the quality of fiat redemption partners supporting OTC brokers.',
+          'Cross-border stablecoin corridors raise AML/CFT considerations. MICAr is is said to assess VASP licensing, travel-rule compliance and the quality of fiat redemption partners supporting OTC brokers.',
           'In dollarised regions, authorities balance capital-control objectives with the efficiency gains of programmable cross-border money. Data-sharing frameworks with chain analytics firms help isolate illicit flows.',
         ],
       },
@@ -260,77 +324,23 @@ export const useCases: UseCaseDefinition[] = [
       },
     ],
     sources: [
-      { label: 'IMF Working Paper ? Decrypting Crypto (2025)', url: 'imf.org' },
-      { label: 'Bank for International Settlements ? Stablecoin monitoring', url: 'bis.org' },
+      { label: 'IMF Working Paper - Decrypting Crypto (2025)', url: 'imf.org' },
+      { label: 'Bank for International Settlements - Stablecoin monitoring', url: 'bis.org' },
       { label: 'Artemis Analytics (2025)', url: 'reports.artemisanalytics.com' },
     ],
-    accentClass: 'from-emerald-500 via-teal-500 to-cyan-500',
+    accentClass: 'from-[#065f46] via-[#047857] to-[#34d399]',
     icon: 'crossBorder',
-  },
-  {
-    slug: 'payments',
-    name: 'Payments & Treasury',
-    route: '/use-cases/payments',
-    headline: 'Genuine commerce payments remain a small but fast-growing share of stablecoin usage, led by B2B settlement networks.',
-    summary:
-      'Payments use cases account for roughly US$1.3 trillion in annualised settlement?about 8% of the on-chain volume captured by Artemis. B2B flows dominate, with payroll, card-linked spending and remittances scaling as compliance-grade infrastructure matures.',
-    type: 'static',
-    shareOfVolumePercent: 8.3,
-    annualisedVolumeUsdTrillions: 1.3,
-    highlight: 'Early traction for programmable commerce rails',
-    insightBullets: [
-      'Artemis survey (2025) records US$94.2 billion of payments between Jan 2023 and Feb 2025, with a run rate of US$72.3 billion per year.',
-      'B2B transactions represent 49.8% of observed payment volume; P2P and card-linked programmes follow at 24.9% and 18.3%.',
-      'Despite growth, payments equal just 0.28% of total stablecoin settlement when benchmarked against BCG?s US$26.1 trillion volume estimate.',
-    ],
-    metrics: [
-      {
-        label: 'Share of tracked volume',
-        value: '8.3 %',
-        context: 'Artemis payments classification.',
-      },
-      {
-        label: 'Annualised settlement',
-        value: 'US$1.3 T',
-        context: 'Includes B2B, P2P, card-linked, B2C payouts and prefunding.',
-      },
-      {
-        label: 'Verified run rate',
-        value: 'US$72.3 B',
-        context: 'Artemis survey of 31 payment providers (Jan 2025).',
-      },
-    ],
-    paymentBreakdown: [
-      { label: 'B2B payments', runRateUsdBillions: 36.0, shareOfPayments: 49.8, shareOfTotalVolume: 0.14 },
-      { label: 'P2P payments', runRateUsdBillions: 18.0, shareOfPayments: 24.9, shareOfTotalVolume: 0.07 },
-      { label: 'Card-linked spend', runRateUsdBillions: 13.2, shareOfPayments: 18.3, shareOfTotalVolume: 0.05 },
-      { label: 'B2C payouts', runRateUsdBillions: 3.3, shareOfPayments: 4.5, shareOfTotalVolume: 0.013 },
-      { label: 'Prefunding float', runRateUsdBillions: 2.5, shareOfPayments: 3.5, shareOfTotalVolume: 0.010 },
-    ],
-    narrative: [
-      {
-        title: 'Commercial adoption patterns',
-        paragraphs: [
-          'Corporate treasurers experiment with stablecoins for just-in-time payouts and supplier settlement, particularly where treasury teams seek intraday finality. Payroll and gig-economy disbursements leverage stablecoins for weekend settlement and multi-currency coverage.',
-          'Consumer-facing programmes remain niche but improving: card-linked wallets on Solana, Polygon and Base abstract crypto UX via stable-denominated rewards and spend controls.',
-        ],
-      },
-      {
-        title: 'Regulatory runway',
-        paragraphs: [
-          'MiCA licensing (EU) and state-level US frameworks will determine how quickly regulated institutions can launch stablecoin payment services. Requirements around reserve composition, capital buffers and redemption SLAs need harmonisation with card and ACH standards.',
-          'Supervisors evaluate how stablecoin payment processors manage AML, sanctions screening and safeguarding of float. Collaboration with commercial banks is crucial to keep settlement flows anchored in supervised entities.',
-        ],
-      },
-    ],
-    sources: [
-      { label: 'Artemis Analytics ? Payments survey (2025)', url: 'reports.artemisanalytics.com' },
-      { label: 'Boston Consulting Group (2025)', url: 'media-publications.bcg.com' },
-      { label: 'McKinsey ? Stablecoins as payment infrastructure (2025)', url: 'mckinsey.com' },
-    ],
-    accentClass: 'from-blue-600 via-indigo-500 to-slate-500',
-    icon: 'payments',
   },
 ];
 
 export const useCaseMap = new Map(useCases.map(useCase => [useCase.slug, useCase]));
+
+
+
+
+
+
+
+
+
+

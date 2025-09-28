@@ -7,9 +7,16 @@ import type { StablecoinTimeframe } from '../types/stablecoin';
 interface UseCaseDetailPageProps {
   selectedTimeframe: StablecoinTimeframe;
   selectedStablecoin: string;
+  onTimeframeChange: (timeframe: StablecoinTimeframe) => void;
+  onStablecoinChange: (stablecoin: string) => void;
 }
 
-export function UseCaseDetailPage({ selectedTimeframe, selectedStablecoin }: UseCaseDetailPageProps) {
+export function UseCaseDetailPage({
+  selectedTimeframe,
+  selectedStablecoin,
+  onTimeframeChange,
+  onStablecoinChange,
+}: UseCaseDetailPageProps) {
   const { slug } = useParams();
   const useCase = slug ? useCaseMap.get(slug) : undefined;
 
@@ -43,6 +50,8 @@ export function UseCaseDetailPage({ selectedTimeframe, selectedStablecoin }: Use
           useCase={useCase}
           selectedTimeframe={selectedTimeframe}
           selectedStablecoin={selectedStablecoin}
+          onTimeframeChange={onTimeframeChange}
+          onStablecoinChange={onStablecoinChange}
         />
       ) : (
         <StaticUseCaseDetail useCase={useCase} />
