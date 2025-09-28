@@ -101,29 +101,69 @@ export function StaticUseCaseDetail({ useCase }: { useCase: UseCaseDefinition })
         </div>
       </header>
 
-      <section className="rounded-3xl border border-gray-200 dark:border-gray-700 bg-white p-6 shadow-sm dark:bg-gray-800">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Supervisory signals</h2>
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-          {useCase.metrics.map(metric => (
-            <div key={metric.label} className="rounded-2xl border border-gray-100 bg-gray-50/70 p-5 shadow-sm dark:border-gray-700/60 dark:bg-gray-900/30">
-              <p className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">{metric.label}</p>
-              <p className="mt-2 text-xl font-semibold text-gray-900 dark:text-white">{metric.value}</p>
-              <p className="mt-2 text-xs leading-relaxed text-gray-600 dark:text-gray-300">{metric.context}</p>
-            </div>
-          ))}
-        </div>
-      </section>
+      {!isPayments && useCase.metrics.length > 0 && (
+        <section className="rounded-3xl border border-gray-200 dark:border-gray-700 bg-white p-6 shadow-sm dark:bg-gray-800">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Supervisory signals</h2>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+            {useCase.metrics.map(metric => (
+              <div key={metric.label} className="rounded-2xl border border-gray-100 bg-gray-50/70 p-5 shadow-sm dark:border-gray-700/60 dark:bg-gray-900/30">
+                <p className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">{metric.label}</p>
+                <p className="mt-2 text-xl font-semibold text-gray-900 dark:text-white">{metric.value}</p>
+                <p className="mt-2 text-xs leading-relaxed text-gray-600 dark:text-gray-300">{metric.context}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       <section className="rounded-3xl border border-gray-200 dark:border-gray-700 bg-white p-6 shadow-sm dark:bg-gray-800">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Key observations</h2>
-        <ul className="space-y-3 text-sm text-gray-600 dark:text-gray-300">
-          {useCase.insightBullets.map((bullet, index) => (
-            <li key={index} className="flex items-start gap-3">
-              <span className="mt-1 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-blue-500 dark:bg-blue-400" />
-              <span>{bullet}</span>
-            </li>
-          ))}
-        </ul>
+        <div className={isPayments ? 'flex flex-col gap-6 lg:flex-row lg:items-start' : undefined}>
+          <div className={isPayments ? 'flex-1 space-y-4' : 'space-y-4'}>
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Key observations</h2>
+            <ul className="space-y-3 text-sm text-gray-600 dark:text-gray-300">
+              {useCase.insightBullets.map((bullet, index) => (
+                <li key={index} className="flex items-start gap-3">
+                  <span className="mt-1 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-blue-500 dark:bg-blue-400" />
+                  <span>{bullet}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+          {isPayments && (
+            <aside className="lg:w-80 rounded-3xl border border-emerald-300/60 bg-gradient-to-br from-emerald-600 via-emerald-500 to-emerald-400 p-6 text-emerald-50 shadow-lg">
+              <p className="text-xs font-semibold uppercase tracking-wide text-emerald-100">Payments dossier</p>
+              <p className="mt-2 text-sm text-emerald-50/90">{useCase.headline}</p>
+              {runRateMetric && (
+                <div className="mt-4 space-y-1">
+                  <p className="text-[11px] uppercase tracking-wide text-emerald-100/80">Verified run rate</p>
+                  <p className="text-2xl font-semibold">{runRateMetric.value}</p>
+                  <p className="text-xs text-emerald-100/70">{runRateMetric.context}</p>
+                </div>
+              )}
+              <div className="mt-5 grid grid-cols-2 gap-3 text-sm">
+                <div className="space-y-1">
+                  <p className="text-[11px] uppercase tracking-wide text-emerald-100/80">Share of flows</p>
+                  <p className="text-lg font-semibold">{shareMetric ? shareMetric.value : `${useCase.shareOfVolumePercent.toFixed(1)} %`}</p>
+                  <p className="text-[11px] text-emerald-100/70">Report dataset</p>
+                </div>
+                {b2bBreakdown && (
+                  <div className="space-y-1">
+                    <p className="text-[11px] uppercase tracking-wide text-emerald-100/80">B2B share</p>
+                    <p className="text-lg font-semibold">{b2bBreakdown.shareOfPayments.toFixed(1)}%</p>
+                    <p className="text-[11px] text-emerald-100/70">Payments mix leader</p>
+                  </div>
+                )}
+              </div>
+              {settlementMetric && (
+                <div className="mt-5 border-t border-emerald-300/40 pt-4 space-y-1">
+                  <p className="text-[11px] uppercase tracking-wide text-emerald-100/80">Annualised settlement</p>
+                  <p className="text-lg font-semibold">{settlementMetric.value}</p>
+                  <p className="text-[11px] text-emerald-100/70">{settlementMetric.context}</p>
+                </div>
+              )}
+            </aside>
+          )}
+        </div>
       </section>
 
       {useCase.paymentBreakdown && (
@@ -201,5 +241,9 @@ export function StaticUseCaseDetail({ useCase }: { useCase: UseCaseDefinition })
     </div>
   );
 }
+
+
+
+
 
 
