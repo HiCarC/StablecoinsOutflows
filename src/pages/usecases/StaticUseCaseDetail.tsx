@@ -57,8 +57,13 @@ function formatSettlement(value: number): string {
 
 export function StaticUseCaseDetail({ useCase }: { useCase: UseCaseDefinition }) {
   const isTrading = TRADING_SLUGS.has(useCase.slug);
+  const isPayments = useCase.slug === 'payments';
   const classificationLabel = isTrading ? 'Trading-related activity' : 'Real-economy adoption';
   const palette = HEADER_STYLE[useCase.slug] ?? DEFAULT_HEADER_STYLE;
+  const shareMetric = useCase.metrics.find(metric => metric.label === 'Share of tracked volume');
+  const settlementMetric = useCase.metrics.find(metric => metric.label === 'Annualised settlement');
+  const runRateMetric = useCase.metrics.find(metric => metric.label === 'Verified run rate');
+  const b2bBreakdown = useCase.paymentBreakdown?.find(item => item.label === 'B2B payments');
 
   return (
     <div className="space-y-10">
@@ -196,3 +201,5 @@ export function StaticUseCaseDetail({ useCase }: { useCase: UseCaseDefinition })
     </div>
   );
 }
+
+

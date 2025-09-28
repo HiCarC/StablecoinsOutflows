@@ -54,7 +54,7 @@ export function Header({ filters, navLinks = [] }: HeaderProps) {
             </div>
             <div>
               <Link to="/" className="text-2xl font-bold text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                Stablecoin Flow Intelligence
+                Stablecoin Flows
               </Link>
               <p className="text-sm text-gray-600 dark:text-gray-400">
                 Dashboard tracking global stablecoin use-cases

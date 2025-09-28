@@ -144,38 +144,6 @@ export function DefiProtocolsDetail({
         </div>
       </header>
 
-      <section>
-        <MetricsPanel data={data} loading={loading} />
-      </section>
-
-      <section className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-8 shadow-sm space-y-6">
-        {useCase.narrative.map(section => (
-          <article key={section.title} className="space-y-3">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{section.title}</h3>
-            {section.paragraphs.map((paragraph, index) => (
-              <p key={index} className="text-sm leading-relaxed text-gray-600 dark:text-gray-300">
-                {paragraph}
-              </p>
-            ))}
-          </article>
-        ))}
-      </section>
-
-      <section className="bg-gray-50 dark:bg-gray-900/40 border border-gray-200 dark:border-gray-700 rounded-2xl p-6">
-        <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-700 dark:text-gray-200">Source references</h2>
-        <ul className="mt-3 space-y-2 text-sm text-gray-600 dark:text-gray-300">
-          {useCase.sources.map(source => (
-            <li key={source.label} className="flex items-baseline gap-2">
-              <span className="h-1.5 w-1.5 rounded-full bg-blue-500 dark:bg-blue-400" />
-              <span>
-                {source.label}
-                <span className="text-gray-500 dark:text-gray-400"> - {source.url}</span>
-              </span>
-            </li>
-          ))}
-        </ul>
-      </section>
-
       <section className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-6 shadow-sm">
         <div className="flex flex-col gap-6">
           <div>
@@ -221,6 +189,10 @@ export function DefiProtocolsDetail({
           </div>
         </div>
       </section>
+      <section>
+        <MetricsPanel data={data} loading={loading} />
+      </section>
+
 
       <section className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-6 shadow-sm">
         <div className="flex flex-col gap-4">
@@ -253,6 +225,34 @@ export function DefiProtocolsDetail({
           )}
         </div>
       </section>
+      <section className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-8 shadow-sm space-y-6">
+        {useCase.narrative.map(section => (
+          <article key={section.title} className="space-y-3">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{section.title}</h3>
+            {section.paragraphs.map((paragraph, index) => (
+              <p key={index} className="text-sm leading-relaxed text-gray-600 dark:text-gray-300">
+                {paragraph}
+              </p>
+            ))}
+          </article>
+        ))}
+      </section>
+
+      <section className="bg-gray-50 dark:bg-gray-900/40 border border-gray-200 dark:border-gray-700 rounded-2xl p-6">
+        <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-700 dark:text-gray-200">Source references</h2>
+        <ul className="mt-3 space-y-2 text-sm text-gray-600 dark:text-gray-300">
+          {useCase.sources.map(source => (
+            <li key={source.label} className="flex items-baseline gap-2">
+              <span className="h-1.5 w-1.5 rounded-full bg-blue-500 dark:bg-blue-400" />
+              <span>
+                {source.label}
+                <span className="text-gray-500 dark:text-gray-400"> - {source.url}</span>
+              </span>
+            </li>
+          ))}
+        </ul>
+      </section>
+
 
       <section className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-6 shadow-sm">
         <div className="flex flex-col gap-4">

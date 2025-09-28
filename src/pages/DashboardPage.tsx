@@ -83,7 +83,7 @@ export function DashboardPage() {
                 Overview
               </span>
               <h1 className="text-3xl md:text-5xl font-bold leading-tight">
-                Stablecoin flow intelligence for prudential watchdogs
+                Stablecoin flow intelligence for prudential financial stability
               </h1>
               <p className="text-base md:text-lg text-slate-200 leading-relaxed">
                 The report shows that digital dollars overwhelmingly circulate inside trading
@@ -262,6 +262,58 @@ export function DashboardPage() {
           </div>
         </div>
       </section>
+
+      <section className="relative rounded-3xl border border-gray-200 dark:border-gray-700 bg-gradient-to-br from-yellow-200/40 via-amber-700/30 to-amber-950/40 text-white shadow-lg">
+  {/* Overlay for legibility */}
+  <div className="absolute inset-0 rounded-3xl bg-black/25" aria-hidden="true" />
+
+  <div className="relative flex flex-col gap-6 p-6 md:flex-row md:items-center md:justify-between">
+    <div className="space-y-4">
+      <span className="inline-flex items-center gap-2 rounded-full bg-amber-500/30 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-white/90">
+        <Sparkles className="h-4 w-4" />
+        Supervisory telemetry
+      </span>
+      <h2 className="text-2xl font-semibold tracking-tight text-white">
+        Live monitoring of stablecoins
+      </h2>
+      <p className="text-sm leading-relaxed text-gray-200">
+        The Cambridge Centre for Alternative Finance maintains a regulator-grade dashboard for tracking the health of global stablecoins. Is a perfect complement to understand and monitor with live risk analytics designed for supervisors and central bankers.
+      </p>
+      <ul className="space-y-2 text-sm text-gray-200">
+        <li className="flex items-start gap-2">
+          <span className="mt-1 h-1.5 w-1.5 rounded-full bg-white/80" />
+          <span>Real-time peg surveillance across major tokens with configurable alert thresholds.</span>
+        </li>
+        <li className="flex items-start gap-2">
+          <span className="mt-1 h-1.5 w-1.5 rounded-full bg-white/80" />
+          <span>Statistical tooling to quantify drawdowns, recovery velocity and de-peg scenarios.</span>
+        </li>
+        <li className="flex items-start gap-2">
+          <span className="mt-1 h-1.5 w-1.5 rounded-full bg-white/80" />
+          <span>Comparative dashboards tracking issuance momentum and market share shifts across issuers.</span>
+        </li>
+        <li className="flex items-start gap-2">
+          <span className="mt-1 h-1.5 w-1.5 rounded-full bg-white/80" />
+          <span>Reserve composition analytics highlighting changes in backing quality and liquidity buffers.</span>
+        </li>
+      </ul>
+    </div>
+    <a
+      href="https://ccaf.io/cdmd/risks-and-protections"
+      target="_blank"
+      rel="noreferrer"
+      className="inline-flex items-center gap-2 rounded-full bg-amber-600/30 px-5 py-3 text-sm font-semibold text-white transition hover:bg-amber-600/50"
+    >
+      Cambridge Digital Money Dashboard
+      <ArrowRight className="h-7 w-7" />
+    </a>
+  </div>
+</section>
+
+
+
+
+
     </section>
   );
 }
