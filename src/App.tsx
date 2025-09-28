@@ -1,83 +1,68 @@
-import { useState } from 'react';
-import { SankeyDiagram } from './components/SankeyDiagram';
-import { MetricsPanel } from './components/MetricsPanel';
-import { Header } from './components/Header';
-import { DataTable } from './components/DataTable';
-import { ErrorBoundary } from './components/ErrorBoundary';
-import { useStablecoinData } from './hooks/useStablecoinData';
+import { useMemo, useState } from 'react';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { ThemeProvider } from './contexts/ThemeContext';
-import './App.css';
+import { Header } from './components/Header';
+import { DashboardPage } from './pages/DashboardPage';
+import { UseCaseDetailPage } from './pages/UseCaseDetailPage';
+import { useCases } from './data/useCases';
+import type { StablecoinTimeframe } from './types/stablecoin';
 
-function App() {
-  const [selectedTimeframe, setSelectedTimeframe] = useState<'1h' | '24h' | '7d' | '30d'>('24h');
+function AppShell() {
+  const [selectedTimeframe, setSelectedTimeframe] = useState<StablecoinTimeframe>('24h');
   const [selectedStablecoin, setSelectedStablecoin] = useState<string>('all');
-  const [diagramHeight, setDiagramHeight] = useState<number>(500);
-  const { data, loading, error } = useStablecoinData(selectedTimeframe, selectedStablecoin);
-  const lastUpdatedLabel = data?.lastUpdated
-    ? new Date(data.lastUpdated).toLocaleString(undefined, {
-        hour: '2-digit',
-        minute: '2-digit',
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-        timeZoneName: 'short',
-      })
-    : null;
+  const location = useLocation();
+
+  const navLinks = useMemo(
+    () => [
+      { to: '/', label: 'Overview' },
+      ...useCases.map(useCase => ({ to: useCase.route, label: useCase.name })),
+    ],
+    []
+  );
+
+  const isDeFiDetail = location.pathname.startsWith('/use-cases/defi-protocols');
 
   return (
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <Header
+        navLinks={navLinks}
+        filters={
+          isDeFiDetail
+            ? {
+                selectedTimeframe,
+                setSelectedTimeframe,
+                selectedStablecoin,
+                setSelectedStablecoin,
+              }
+            : undefined
+        }
+      />
+
+      <main className="container mx-auto px-4 py-8">
+        <Routes>
+          <Route path="/" element={<DashboardPage />} />
+          <Route
+            path="/use-cases/:slug"
+            element={
+              <UseCaseDetailPage
+                selectedTimeframe={selectedTimeframe}
+                selectedStablecoin={selectedStablecoin}
+              />
+            }
+          />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </main>
+    </div>
+  );
+}
+
+function App() {
+  return (
     <ThemeProvider>
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-        <Header
-          selectedTimeframe={selectedTimeframe}
-          setSelectedTimeframe={setSelectedTimeframe}
-          selectedStablecoin={selectedStablecoin}
-          setSelectedStablecoin={setSelectedStablecoin}
-        />
-
-        <main className="container mx-auto px-4 py-8">
-          {/* Metrics Overview */}
-          <MetricsPanel data={data} loading={loading} />
-
-          {/* Sankey Diagram */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-8">
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-              Stablecoin Flow Visualization
-            </h2>
-            <div className="overflow-hidden" style={{ height: `${diagramHeight}px` }}>
-              <SankeyDiagram
-                data={data?.flows || []}
-                loading={loading}
-                error={error}
-                onHeightChange={setDiagramHeight}
-              />
-            </div>
-            {(data?.metadata?.provider || lastUpdatedLabel) && (
-              <div className="mt-4 flex flex-wrap items-center justify-between text-xs text-gray-500 dark:text-gray-400 gap-2">
-                {lastUpdatedLabel && <span>Snapshot captured {lastUpdatedLabel}</span>}
-                {data?.metadata?.provider && <span>Source: {data.metadata.provider}</span>}
-              </div>
-            )}
-          </div>
-
-          {/* Data Table */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-              Detailed Flow Analysis
-            </h2>
-            <ErrorBoundary>
-              <DataTable
-                data={
-                  data?.flows?.filter(
-                    flow => flow && typeof flow.source === 'string' && typeof flow.target === 'string',
-                  ) || []
-                }
-                loading={loading}
-                totalValue={data?.totalValue || 0}
-              />
-            </ErrorBoundary>
-          </div>
-        </main>
-      </div>
+      <BrowserRouter>
+        <AppShell />
+      </BrowserRouter>
     </ThemeProvider>
   );
 }
