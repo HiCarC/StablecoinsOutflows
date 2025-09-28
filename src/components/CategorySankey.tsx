@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ResponsiveContainer, Sankey } from 'recharts';
+import { useTheme } from '../contexts/ThemeContext';
 
 export interface CategorySankeyItem {
   slug: string;
@@ -32,8 +33,7 @@ interface SankeyLinkPayload {
   isTrading: boolean;
 }
 
-const ROOT_COLOR = '#0f172a';
-const CATEGORY_COLORS: Record<string, string> = {
+const CATEGORY_COLORS_LIGHT: Record<string, string> = {
   'defi-protocols': '#2baae3',
   'centralised-exchanges': '#1d4ed8',
   'mev-arbitrage': '#3b82f6',
@@ -41,7 +41,28 @@ const CATEGORY_COLORS: Record<string, string> = {
   payments: '#10b981',
 };
 
-const LABEL_PRIMARY = 'rgba(226,232,240,0.92)';
+const CATEGORY_COLORS_DARK: Record<string, string> = {
+  'defi-protocols': '#60a5fa',
+  'centralised-exchanges': '#93c5fd',
+  'mev-arbitrage': '#38bdf8',
+  'cross-border': '#34d399',
+  payments: '#6ee7b7',
+};
+
+const ROOT_COLORS: Record<'light' | 'dark', string> = {
+  light: '#0f172a',
+  dark: '#475569',
+};
+
+const LABEL_COLORS: Record<'light' | 'dark', string> = {
+  light: 'rgba(30,41,59,0.85)',
+  dark: 'rgba(226,232,240,0.92)',
+};
+
+const LINK_OPACITY: Record<'light' | 'dark', number> = {
+  light: 0.35,
+  dark: 0.28,
+};
 
 function formatShare(value: number | undefined): string {
   return typeof value === 'number' ? `${value.toFixed(1)}%` : '';
@@ -49,13 +70,20 @@ function formatShare(value: number | undefined): string {
 
 export function CategorySankey({ categories }: CategorySankeyProps) {
   const navigate = useNavigate();
+  const { theme } = useTheme();
+  const isDark = theme === 'dark';
+
+  const nodePalette = isDark ? CATEGORY_COLORS_DARK : CATEGORY_COLORS_LIGHT;
+  const rootColor = ROOT_COLORS[isDark ? 'dark' : 'light'];
+  const labelColor = LABEL_COLORS[isDark ? 'dark' : 'light'];
+  const linkOpacity = LINK_OPACITY[isDark ? 'dark' : 'light'];
 
   const { nodes, links } = useMemo(() => {
     const mappedNodes: SankeyNodePayload[] = [
-      { name: 'Stablecoin flows', color: ROOT_COLOR, index: 0 },
+      { name: 'Stablecoin flows', color: rootColor, index: 0 },
       ...categories.map((category, index) => ({
         name: category.name,
-        color: CATEGORY_COLORS[category.slug] ?? '#0ea5e9',
+        color: nodePalette[category.slug] ?? '#0ea5e9',
         share: category.share,
         isTrading: category.isTrading,
         index: index + 1,
@@ -67,7 +95,7 @@ export function CategorySankey({ categories }: CategorySankeyProps) {
       source: 0,
       target: index + 1,
       value: category.share,
-      color: CATEGORY_COLORS[category.slug] ?? '#0ea5e9',
+      color: nodePalette[category.slug] ?? '#0ea5e9',
       slug: category.slug,
       name: category.name,
       share: category.share,
@@ -76,7 +104,7 @@ export function CategorySankey({ categories }: CategorySankeyProps) {
     }));
 
     return { nodes: mappedNodes, links: mappedLinks };
-  }, [categories]);
+  }, [categories, nodePalette, rootColor]);
 
   const renderNode = (props: any) => {
     const { x, y, width, height, payload } = props;
@@ -84,7 +112,7 @@ export function CategorySankey({ categories }: CategorySankeyProps) {
       return null;
     }
 
-    const color = payload.color ?? ROOT_COLOR;
+    const color = payload.color ?? rootColor;
     const shareText = formatShare(payload.share);
     const name: string = payload.name ?? '';
     const nodeIndex = typeof payload.index === 'number' ? payload.index : 0;
@@ -108,8 +136,9 @@ export function CategorySankey({ categories }: CategorySankeyProps) {
           width={width}
           height={height}
           fill={color}
-          fillOpacity={0.7}
+          fillOpacity={0.75}
           stroke={color}
+          strokeOpacity={0.9}
           rx={10}
           ry={10}
         />
@@ -120,7 +149,7 @@ export function CategorySankey({ categories }: CategorySankeyProps) {
           textAnchor={textAnchor}
           fontSize={13}
           fontWeight={600}
-          fill={LABEL_PRIMARY}
+          fill={labelColor}
         >
           {label}
         </text>
@@ -161,7 +190,7 @@ export function CategorySankey({ categories }: CategorySankeyProps) {
         stroke={linkPayload.color}
         strokeWidth={Math.max(1, linkWidth)}
         fill="none"
-        strokeOpacity={0.28}
+        strokeOpacity={linkOpacity}
         onClick={handleClick}
         style={linkPayload.slug ? { cursor: 'pointer' } : undefined}
       />
