@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { ResponsiveContainer, Sankey } from 'recharts';
 import type { PaymentBreakdownItem } from '../data/useCases';
+import { useTheme } from '../contexts/ThemeContext';
 
 interface PaymentsMixSankeyProps {
   breakdown: PaymentBreakdownItem[];
@@ -16,22 +17,45 @@ interface SankeyLinkPayload {
   color: string;
 }
 
-const ROOT_COLOR = '#065f46';
-const LABEL_COLOR = 'rgba(15,23,42,0.85)';
-const DARK_LABEL_COLOR = 'rgba(226,250,240,0.92)';
-const PALETTE = ['#047857', '#059669', '#10b981', '#34d399', '#6ee7b7'];
+const ROOT_COLORS: Record<'light' | 'dark', string> = {
+  light: '#065f46',
+  dark: '#22c55e',
+};
+
+const LABEL_COLORS: Record<'light' | 'dark', string> = {
+  light: 'rgba(15,23,42,0.85)',
+  dark: 'rgba(226,250,240,0.92)',
+};
+
+const PALETTES: Record<'light' | 'dark', string[]> = {
+  light: ['#047857', '#059669', '#10b981', '#34d399', '#6ee7b7'],
+  dark: ['#34d399', '#4ade80', '#22d3ee', '#5eead4', '#a7f3d0'],
+};
+
+const LINK_OPACITY: Record<'light' | 'dark', number> = {
+  light: 0.35,
+  dark: 0.28,
+};
 
 export function PaymentsMixSankey({ breakdown }: PaymentsMixSankeyProps) {
+  const { theme } = useTheme();
+  const mode: 'light' | 'dark' = theme === 'dark' ? 'dark' : 'light';
+
+  const rootColor = ROOT_COLORS[mode];
+  const palette = PALETTES[mode];
+  const labelColor = LABEL_COLORS[mode];
+  const linkOpacity = LINK_OPACITY[mode];
+
   const { nodes, links } = useMemo(() => {
     const mappedNodes: SankeyNodePayload[] = [
       {
         name: 'Payments & Treasury',
-        color: ROOT_COLOR,
+        color: rootColor,
         index: 0,
       },
       ...breakdown.map((item, index) => ({
-        name: `${item.label} - ${item.shareOfPayments.toFixed(1)}%`,
-        color: PALETTE[index % PALETTE.length],
+        name: `${item.label} (${item.shareOfPayments.toFixed(1)}%)`,
+        color: palette[index % palette.length],
         index: index + 1,
       })),
     ];
@@ -40,11 +64,11 @@ export function PaymentsMixSankey({ breakdown }: PaymentsMixSankeyProps) {
       source: 0,
       target: index + 1,
       value: item.runRateUsdBillions,
-      color: PALETTE[index % PALETTE.length],
+      color: palette[index % palette.length],
     }));
 
     return { nodes: mappedNodes, links: mappedLinks };
-  }, [breakdown]);
+  }, [breakdown, palette, rootColor]);
 
   const renderNode = (props: any) => {
     const { x, y, width, height, payload } = props;
@@ -55,10 +79,9 @@ export function PaymentsMixSankey({ breakdown }: PaymentsMixSankeyProps) {
 
     const nodePayload = payload as SankeyNodePayload;
     const isRoot = nodePayload.index === 0;
-    const color = nodePayload.color ?? ROOT_COLOR;
+    const color = nodePayload.color ?? rootColor;
     const textX = isRoot ? x + width + 14 : x + width - 12;
     const textAnchor = isRoot ? 'start' : 'end';
-    const textColor = isRoot ? LABEL_COLOR : DARK_LABEL_COLOR;
 
     return (
       <g>
@@ -79,7 +102,7 @@ export function PaymentsMixSankey({ breakdown }: PaymentsMixSankeyProps) {
           textAnchor={textAnchor}
           fontSize={13}
           fontWeight={600}
-          fill={textColor}
+          fill={labelColor}
         >
           {nodePayload.name}
         </text>
@@ -114,7 +137,7 @@ export function PaymentsMixSankey({ breakdown }: PaymentsMixSankeyProps) {
         stroke={linkPayload.color}
         strokeWidth={Math.max(1, linkWidth)}
         fill="none"
-        strokeOpacity={0.35}
+        strokeOpacity={linkOpacity}
         style={{ pointerEvents: 'none' }}
       />
     );

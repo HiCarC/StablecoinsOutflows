@@ -130,38 +130,42 @@ export function StaticUseCaseDetail({ useCase }: { useCase: UseCaseDefinition })
             </ul>
           </div>
           {isPayments && (
-            <aside className="lg:w-80 rounded-3xl border border-emerald-300/60 bg-gradient-to-br from-emerald-600 via-emerald-500 to-emerald-400 p-6 text-emerald-50 shadow-lg">
-              <p className="text-xs font-semibold uppercase tracking-wide text-emerald-100">Payments dossier</p>
-              <p className="mt-2 text-sm text-emerald-50/90">{useCase.headline}</p>
-              {runRateMetric && (
-                <div className="mt-4 space-y-1">
-                  <p className="text-[11px] uppercase tracking-wide text-emerald-100/80">Verified run rate</p>
-                  <p className="text-2xl font-semibold">{runRateMetric.value}</p>
-                  <p className="text-xs text-emerald-100/70">{runRateMetric.context}</p>
-                </div>
-              )}
-              <div className="mt-5 grid grid-cols-2 gap-3 text-sm">
-                <div className="space-y-1">
-                  <p className="text-[11px] uppercase tracking-wide text-emerald-100/80">Share of flows</p>
-                  <p className="text-lg font-semibold">{shareMetric ? shareMetric.value : `${useCase.shareOfVolumePercent.toFixed(1)} %`}</p>
-                  <p className="text-[11px] text-emerald-100/70">Report dataset</p>
-                </div>
-                {b2bBreakdown && (
-                  <div className="space-y-1">
-                    <p className="text-[11px] uppercase tracking-wide text-emerald-100/80">B2B share</p>
-                    <p className="text-lg font-semibold">{b2bBreakdown.shareOfPayments.toFixed(1)}%</p>
-                    <p className="text-[11px] text-emerald-100/70">Payments mix leader</p>
+            <div className="lg:w-80 space-y-3">
+              <p className="text-sm font-medium text-emerald-700 dark:text-emerald-200">{useCase.headline}</p>
+              <aside className="rounded-3xl border border-emerald-300/60 bg-gradient-to-br from-emerald-600 via-emerald-500 to-emerald-400 p-6 text-emerald-50 shadow-lg">
+                <p className="text-xs font-semibold uppercase tracking-wide text-emerald-100">Payments dossier</p>
+                {runRateMetric && (
+                  <div className="mt-4 space-y-1">
+                    <p className="text-[11px] uppercase tracking-wide text-emerald-100/80">Verified run rate</p>
+                    <p className="text-2xl font-semibold">{runRateMetric.value}</p>
+                    <p className="text-xs text-emerald-100/70">{runRateMetric.context}</p>
                   </div>
                 )}
-              </div>
-              {settlementMetric && (
-                <div className="mt-5 border-t border-emerald-300/40 pt-4 space-y-1">
-                  <p className="text-[11px] uppercase tracking-wide text-emerald-100/80">Annualised settlement</p>
-                  <p className="text-lg font-semibold">{settlementMetric.value}</p>
-                  <p className="text-[11px] text-emerald-100/70">{settlementMetric.context}</p>
+                <div className="mt-5 grid grid-cols-2 gap-3 text-sm">
+                  <div className="space-y-1">
+                    <p className="text-[11px] uppercase tracking-wide text-emerald-100/80">Share of flows</p>
+                    <p className="text-lg font-semibold">
+                      {shareMetric ? shareMetric.value : `${useCase.shareOfVolumePercent.toFixed(1)} %`}
+                    </p>
+                    <p className="text-[11px] text-emerald-100/70">Report dataset</p>
+                  </div>
+                  {b2bBreakdown && (
+                    <div className="space-y-1">
+                      <p className="text-[11px] uppercase tracking-wide text-emerald-100/80">B2B share</p>
+                      <p className="text-lg font-semibold">{b2bBreakdown.shareOfPayments.toFixed(1)}%</p>
+                      <p className="text-[11px] text-emerald-100/70">Payments mix leader</p>
+                    </div>
+                  )}
                 </div>
-              )}
-            </aside>
+                {settlementMetric && (
+                  <div className="mt-5 border-t border-emerald-300/40 pt-4 space-y-1">
+                    <p className="text-[11px] uppercase tracking-wide text-emerald-100/80">Annualised settlement</p>
+                    <p className="text-lg font-semibold">{settlementMetric.value}</p>
+                    <p className="text-[11px] text-emerald-100/70">{settlementMetric.context}</p>
+                  </div>
+                )}
+              </aside>
+            </div>
           )}
         </div>
       </section>
@@ -241,9 +245,3 @@ export function StaticUseCaseDetail({ useCase }: { useCase: UseCaseDefinition })
     </div>
   );
 }
-
-
-
-
-
-

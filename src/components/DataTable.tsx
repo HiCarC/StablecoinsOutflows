@@ -21,13 +21,13 @@ function formatValue(value: number): string {
 
 function getStablecoinBadge(stablecoin: string): string {
   const palette: Record<string, string> = {
-    USDT: 'bg-emerald-100 text-emerald-900',
-    USDC: 'bg-blue-100 text-blue-900',
-    DAI: 'bg-amber-100 text-amber-900',
-    BUSD: 'bg-yellow-100 text-yellow-900',
-    TUSD: 'bg-green-100 text-green-900',
+    USDT: 'bg-emerald-100 text-emerald-900 dark:bg-emerald-400/20 dark:text-emerald-100',
+    USDC: 'bg-blue-100 text-blue-900 dark:bg-blue-400/20 dark:text-blue-100',
+    DAI: 'bg-amber-100 text-amber-900 dark:bg-amber-400/20 dark:text-amber-100',
+    BUSD: 'bg-yellow-100 text-yellow-900 dark:bg-yellow-400/20 dark:text-yellow-100',
+    TUSD: 'bg-green-100 text-green-900 dark:bg-emerald-300/20 dark:text-emerald-100',
   };
-  return palette[stablecoin] || 'bg-gray-100 text-gray-700';
+  return palette[stablecoin] ?? 'bg-gray-100 text-gray-700 dark:bg-gray-700/60 dark:text-gray-200';
 }
 
 export function DataTable({ data, loading, totalValue }: DataTableProps) {
@@ -93,25 +93,25 @@ export function DataTable({ data, loading, totalValue }: DataTableProps) {
     return (
       <div className="space-y-4">
         <div className="animate-pulse">
-          <div className="h-10 bg-gray-200 rounded-lg w-1/3"></div>
+          <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded-lg w-1/3"></div>
         </div>
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+            <thead className="bg-gray-50 dark:bg-gray-800">
               <tr>
                 {[...Array(4)].map((_, index) => (
                   <th key={index} className="px-6 py-3 text-left">
-                    <div className="h-4 bg-gray-200 rounded w-20"></div>
+                    <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-20"></div>
                   </th>
                 ))}
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
               {[...Array(6)].map((_, rowIndex) => (
                 <tr key={rowIndex}>
                   {[...Array(4)].map((__, colIndex) => (
                     <td key={colIndex} className="px-6 py-4 whitespace-nowrap">
-                      <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                      <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4"></div>
                     </td>
                   ))}
                 </tr>
@@ -217,3 +217,4 @@ export function DataTable({ data, loading, totalValue }: DataTableProps) {
     </div>
   );
 }
+
