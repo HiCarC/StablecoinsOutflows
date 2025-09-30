@@ -49,25 +49,25 @@ export const useCases: UseCaseDefinition[] = [
     route: '/use-cases/defi-protocols',
     headline: 'Protocols remain the primary sink for circulating stablecoins, underwriting leverage, swaps and structured yields.',
     summary:
-      'Roughly half of on-chain stablecoin value rotates through lending markets, automated market makers and structured vaults. These venues consume US$7.8 trillion of stablecoin settlement annually, enabling leverage, liquidity provisioning and risk transfer for the wider crypto ecosystem.',
+      'Roughly half of on-chain stablecoin value rotates through lending markets, automated market makers and structured vaults. These venues consume US$12.2 trillion of stablecoin settlement annually, enabling leverage, liquidity provisioning and risk transfer for the wider crypto ecosystem.',
     type: 'defi',
-    shareOfVolumePercent: 49.7,
-    annualisedVolumeUsdTrillions: 7.8,
+    shareOfVolumePercent: 46.5,
+    annualisedVolumeUsdTrillions: 12.2,
     highlight: 'Deepest liquidity engine for digital dollars',
     insightBullets: [
-      'Artemis Analytics shows lending, AMM and yield protocols process almost US$8 trillion of stablecoin settlement per year, dwarfing other on-chain use cases.',
+      'Artemis Analytics shows lending, AMM and yield protocols process more than US$12 trillion of stablecoin settlement per year, dwarfing other on-chain use cases.',
       'Keyrock reports stablecoins contributing 30.8% of aggregate DeFi protocol revenue in 2025, up from just 4.7% at the 2024 trough.',
       'Lending protocols captured 65% of stablecoin revenue in 2023 but AMMs narrowed the gap to 15% vs 11% by mid-2025 as volume returned to Layer-2 liquidity venues.',
     ],
     metrics: [
       {
         label: 'Share of tracked volume',
-        value: '49.7 %',
+        value: '46.5 %',
         context: 'Artemis on-chain dataset covering major stablecoins in 2024/25.',
       },
       {
         label: 'Annualised settlement',
-        value: 'US$7.8 T',
+        value: 'US$12.2 T',
         context: 'DeFi pool inflows and outflows harmonised across DEX, lending and yield aggregators.',
       },
       {
@@ -106,10 +106,10 @@ export const useCases: UseCaseDefinition[] = [
     route: '/use-cases/centralised-exchanges',
     headline: 'Centralised exchanges remain the core distribution rail for stablecoins, intermediating fiat ramps and crypto trading.',
     summary:
-      'CEX platforms capture US$4.3 trillion of annualised stablecoin settlement, acting as gateways between banking rails and on-chain liquidity. They underpin arbitrage, express price discovery and institutional access, even as DeFi share expands.',
+      'CEX platforms capture US$10.3 trillion of annualised stablecoin settlement, acting as gateways between banking rails and on-chain liquidity. They underpin arbitrage, express price discovery and institutional access, even as DeFi share expands.',
     type: 'static',
-    shareOfVolumePercent: 27.4,
-    annualisedVolumeUsdTrillions: 4.3,
+    shareOfVolumePercent: 39.0,
+    annualisedVolumeUsdTrillions: 10.3,
     highlight: 'Primary on/off-ramps for stablecoin liquidity',
     insightBullets: [
       'Visa Onchain attributes 41% of adjusted stablecoin flow to CEX interactions, underscoring persistent reliance on intermediated order books.',
@@ -119,17 +119,17 @@ export const useCases: UseCaseDefinition[] = [
     metrics: [
       {
         label: 'Share of tracked volume',
-        value: '27.4 %',
+        value: '39.0 %',
         context: 'Artemis dataset - centralised exchange category.',
       },
       {
         label: 'Annualised settlement',
-        value: 'US$4.3 T',
+        value: 'US$10.3 T',
         context: 'Net deposits and withdrawals between wallets and exchange clusters.',
       },
       {
         label: 'Trading share',
-        value: '~75 % of total',
+        value: '~88 % of total flows',
         context: 'Combined BCG and a16z estimates for CEX vs DEX spot activity (2025).',
       },
     ],
@@ -162,10 +162,10 @@ export const useCases: UseCaseDefinition[] = [
     route: '/use-cases/mev-arbitrage',
     headline: 'Validator strategies and searcher bots recycle stablecoins to arbitrage inefficiencies across chains and liquidity venues.',
     summary:
-      'Miner-extractable value (MEV) represents US$1.9 trillion of stablecoin settlement annually. Searchers continuously borrow and repay stablecoins to capture sandwich, liquidation and cross-venue arbitrage opportunities, particularly on Ethereum rollups.',
+      'Miner-extractable value (MEV) represents US$3.1 trillion of stablecoin settlement annually. Searchers continuously borrow and repay stablecoins to capture sandwich, liquidation and cross-venue arbitrage opportunities, particularly on Ethereum rollups.',
     type: 'static',
-    shareOfVolumePercent: 12.1,
-    annualisedVolumeUsdTrillions: 1.9,
+    shareOfVolumePercent: 11.6,
+    annualisedVolumeUsdTrillions: 3.1,
     highlight: 'Latency-sensitive recycling of stablecoins for strategy execution',
     insightBullets: [
       'Artemis attributes 12% of tracked stablecoin flows to MEV activity, concentrated on Ethereum mainnet and rollups with transparent mempools.',
@@ -175,12 +175,12 @@ export const useCases: UseCaseDefinition[] = [
     metrics: [
       {
         label: 'Share of tracked volume',
-        value: '12.1 %',
+        value: '11.6 %',
         context: 'Artemis on-chain classification (2024/25).',
       },
       {
         label: 'Annualised settlement',
-        value: 'US$1.9 T',
+        value: 'US$3.1 T',
         context: 'Stablecoin legs inside MEV bundles and liquidations.',
       },
       {
@@ -217,25 +217,25 @@ export const useCases: UseCaseDefinition[] = [
     route: '/use-cases/payments',
     headline: 'Genuine commerce payments remain a small but fast-growing share of stablecoin usage, led by B2B settlement networks.',
     summary:
-      'Payments use cases account for roughly US$1.3 trillion in annualised settlement- about 8% of the on-chain volume captured by Artemis. B2B flows dominate, with payroll, card-linked spending and remittances scaling as compliance-grade infrastructure matures.',
+      'Payments use cases account for roughly US$0.08 trillion (about US$80 billion) in annualised settlement - about 0.3% of the on-chain volume captured by Artemis. B2B flows dominate, with payroll, card-linked spending and remittances scaling as compliance-grade infrastructure matures.',
     type: 'static',
-    shareOfVolumePercent: 8.3,
-    annualisedVolumeUsdTrillions: 1.3,
+    shareOfVolumePercent: 0.3,
+    annualisedVolumeUsdTrillions: 0.08,
     highlight: 'Early traction for programmable commerce rails',
     insightBullets: [
       'Artemis survey (2025) records US$94.2 billion of payments between Jan 2023 and Feb 2025, with a run rate of US$72.3 billion per year.',
       'B2B transactions represent 49.8% of observed payment volume; P2P and card-linked programmes follow at 24.9% and 18.3%.',
-      'Despite growth, payments equal just 0.28% of total stablecoin settlement when benchmarked against BCG\'s US$26.1 trillion volume estimate.',
+      'Despite growth, payments equal just 0.3% of total stablecoin settlement when benchmarked against the US$26.3 trillion volume base.',
     ],
     metrics: [
       {
         label: 'Share of tracked volume',
-        value: '8.3 %',
+        value: '0.3 %',
         context: 'Artemis payments classification.',
       },
       {
         label: 'Annualised settlement',
-        value: 'US$1.3 T',
+        value: 'US$0.08 T',
         context: 'Includes B2B, P2P, card-linked, B2C payouts and prefunding.',
       },
       {
@@ -245,11 +245,11 @@ export const useCases: UseCaseDefinition[] = [
       },
     ],
     paymentBreakdown: [
-      { label: 'B2B payments', runRateUsdBillions: 36.0, shareOfPayments: 49.8, shareOfTotalVolume: 0.14 },
-      { label: 'P2P payments', runRateUsdBillions: 18.0, shareOfPayments: 24.9, shareOfTotalVolume: 0.07 },
-      { label: 'Card-linked spend', runRateUsdBillions: 13.2, shareOfPayments: 18.3, shareOfTotalVolume: 0.05 },
-      { label: 'B2C payouts', runRateUsdBillions: 3.3, shareOfPayments: 4.5, shareOfTotalVolume: 0.013 },
-      { label: 'Prefunding float', runRateUsdBillions: 2.5, shareOfPayments: 3.5, shareOfTotalVolume: 0.010 },
+      { label: 'B2B payments', runRateUsdBillions: 36.0, shareOfPayments: 49.8, shareOfTotalVolume: 0.149 },
+      { label: 'P2P payments', runRateUsdBillions: 18.0, shareOfPayments: 24.9, shareOfTotalVolume: 0.075 },
+      { label: 'Card-linked spend', runRateUsdBillions: 13.2, shareOfPayments: 18.3, shareOfTotalVolume: 0.055 },
+      { label: 'B2C payouts', runRateUsdBillions: 3.3, shareOfPayments: 4.5, shareOfTotalVolume: 0.014 },
+      { label: 'Prefunding float', runRateUsdBillions: 2.5, shareOfPayments: 3.5, shareOfTotalVolume: 0.011 },
     ],
     narrative: [
       {
@@ -281,10 +281,10 @@ export const useCases: UseCaseDefinition[] = [
     route: '/use-cases/cross-border',
     headline: 'Stablecoins provide near-instant settlement for corridors underserved by traditional correspondent banking networks.',
     summary:
-      'Cross-border stablecoin transfers account for roughly US$0.4 trillion in annual settlement. Usage spikes when the US dollar appreciates or when capital controls bind, highlighting their role as synthetic dollars for emerging markets.',
+      'Cross-border stablecoin transfers account for roughly US$0.7 trillion in annual settlement. Usage spikes when the US dollar appreciates or when capital controls bind, highlighting their role as synthetic dollars for emerging markets.',
     type: 'static',
     shareOfVolumePercent: 2.6,
-    annualisedVolumeUsdTrillions: 0.4,
+    annualisedVolumeUsdTrillions: 0.7,
     highlight: 'Synthetic dollar rails for emerging-market users',
     insightBullets: [
       'IMF research finds North America recorded US$633 billion of stablecoin flows in 2024, with net outflows towards Asia-Pacific and other regions.',
@@ -299,7 +299,7 @@ export const useCases: UseCaseDefinition[] = [
       },
       {
         label: 'Annualised settlement',
-        value: 'US$0.4 T',
+        value: 'US$0.7 T',
         context: 'Cross-wallet transfers tagged to remittance corridors.',
       },
       {
