@@ -1,4 +1,4 @@
-import { Wallet, ArrowRight, CheckCircle } from 'lucide-react';
+import { Wallet, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import type { UseCaseDefinition } from '../../data/useCases';
 import { useCases } from '../../data/useCases';
