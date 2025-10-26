@@ -30,7 +30,7 @@ function applyTheme(theme: Theme) {
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const storedValue = typeof window !== 'undefined' ? window.localStorage.getItem(STORAGE_KEY) : null;
   const hasStoredPreference = storedValue === 'light' || storedValue === 'dark';
-  const initialTheme = hasStoredPreference ? (storedValue as Theme) : getSystemTheme();
+  const initialTheme = hasStoredPreference ? (storedValue as Theme) : 'light';
 
   const [theme, setTheme] = useState<Theme>(() => {
     if (typeof document !== 'undefined') {
