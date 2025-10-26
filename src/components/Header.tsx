@@ -1,5 +1,5 @@
 import { Shield, Globe, Sun, Moon, Menu } from 'lucide-react';
-import { NavLink, Link } from 'react-router-dom';
+import { NavLink, Link, useLocation } from 'react-router-dom';
 import { useState } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
 
@@ -41,8 +41,10 @@ const timeframes = [
 export function Header({ filters, navLinks = [] }: HeaderProps) {
   const { theme, toggleTheme } = useTheme();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const location = useLocation();
 
   const showFilters = Boolean(filters);
+  const isDefiProtocolPage = location.pathname === '/use-cases/defi-protocols';
 
   return (
     <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 shadow-sm">
@@ -99,11 +101,13 @@ export function Header({ filters, navLinks = [] }: HeaderProps) {
             >
               {theme === 'light' ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
             </button>
-            <div className="hidden sm:flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400">
-              <Globe className="h-4 w-4" />
-              <span>Live Data</span>
-              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-            </div>
+            {isDefiProtocolPage && (
+              <div className="hidden sm:flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400">
+                <Globe className="h-4 w-4" />
+                <span>Live Data</span>
+                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+              </div>
+            )}
           </div>
         </div>
 

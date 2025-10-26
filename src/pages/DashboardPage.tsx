@@ -9,6 +9,7 @@ import {
   Workflow,
   Sparkles,
   ShieldCheck,
+  Globe,
 } from 'lucide-react';
 import { CategorySankey, type CategorySankeyItem } from '../components/CategorySankey';
 import { useCases } from '../data/useCases';
@@ -136,7 +137,7 @@ export function DashboardPage() {
           <div className="px-6 py-5 border-b border-gray-200 dark:border-gray-700">
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Reported flow distribution</h2>
             <p className="text-sm text-gray-600 dark:text-gray-300">
-              Only the DeFi drill-down provides live telemetry.
+              Only the DeFi Protocol Liquidity page provides live telemetry. All other data is static from published datasets.
             </p>
           </div>
           <div className="px-4 py-6">
@@ -187,7 +188,16 @@ export function DashboardPage() {
                       <Icon className="h-6 w-6" />
                     </span>
                     <div>
-                      <h2 className="text-lg font-semibold tracking-tight">{useCase.name}</h2>
+                      <div className="flex items-center gap-2">
+                        <h2 className="text-lg font-semibold tracking-tight">{useCase.name}</h2>
+                        {useCase.slug === 'defi-protocols' && (
+                          <div className="flex items-center gap-1.5 text-sm text-green-300">
+                            <Globe className="h-4 w-4" />
+                            <span className="font-semibold">Live</span>
+                            <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+                          </div>
+                        )}
+                      </div>
                       <p className="text-xs uppercase tracking-wide text-white/80">{useCase.highlight}</p>
                     </div>
                   </div>

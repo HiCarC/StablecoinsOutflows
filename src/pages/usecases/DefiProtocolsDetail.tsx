@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Activity, BarChart3, Gauge } from 'lucide-react';
+import { Activity, BarChart3, Gauge, Globe } from 'lucide-react';
 import { MetricsPanel } from '../../components/MetricsPanel';
 import { SankeyDiagram } from '../../components/SankeyDiagram';
 import { DataTable } from '../../components/DataTable';
@@ -116,8 +116,15 @@ export function DefiProtocolsDetail({
                 DeFi telemetry
               </span>
               <h1 className="text-3xl md:text-4xl font-bold leading-tight">{useCase.name}</h1>
-              <p className="text-base md:text-lg text-slate-100 leading-relaxed">{useCase.summary}</p>
+              <p className="text-base md:text-lg text-slate-100 leading-relaxed">
+                {useCase.summary} This page provides live telemetry data, while other pages show static data from published datasets.
+              </p>
               <div className="flex flex-wrap gap-3 text-sm text-slate-100/90">
+                <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 font-semibold">
+                  <Globe className="h-4 w-4" />
+                  Live Data
+                  <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+                </span>
                 <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 font-semibold">
                   <BarChart3 className="h-4 w-4" />
                   {`Time horizon ${selectedTimeframe}`}
