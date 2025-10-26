@@ -11,13 +11,6 @@ const STORAGE_KEY = 'theme';
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
-function getSystemTheme(): Theme {
-  if (typeof window === 'undefined') {
-    return 'light';
-  }
-  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-}
-
 function applyTheme(theme: Theme) {
   if (typeof document === 'undefined') {
     return;
