@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { Header } from './components/Header';
+import { ScrollToTop } from './components/ScrollToTop';
 import { DashboardPage } from './pages/DashboardPage';
 import { UseCaseDetailPage } from './pages/UseCaseDetailPage';
 import { useCases } from './data/useCases';
@@ -48,6 +49,7 @@ function App() {
   return (
     <ThemeProvider>
       <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+        <ScrollToTop />
         <AppShell />
       </BrowserRouter>
     </ThemeProvider>

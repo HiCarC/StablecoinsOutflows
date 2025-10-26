@@ -1,8 +1,18 @@
-import { Wallet } from 'lucide-react';
+import { Wallet, ArrowRight, CheckCircle } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import type { UseCaseDefinition } from '../../data/useCases';
+import { useCases } from '../../data/useCases';
 import { PaymentsMixSankey } from '../../components/PaymentsMixSankey';
 
 const TRADING_SLUGS = new Set(['defi-protocols', 'centralised-exchanges', 'mev-arbitrage']);
+
+function getNextUseCase(currentSlug: string): UseCaseDefinition | null {
+  const currentIndex = useCases.findIndex(uc => uc.slug === currentSlug);
+  if (currentIndex === -1 || currentIndex === useCases.length - 1) {
+    return null; // No next use case
+  }
+  return useCases[currentIndex + 1];
+}
 
 const HEADER_STYLE: Record<string, { border: string; glow: string; badge: string; meta: string }> = {
   'defi-protocols': {
@@ -226,6 +236,57 @@ export function StaticUseCaseDetail({ useCase }: { useCase: UseCaseDefinition })
         </div>
       </section>
 
+      {(() => {
+        const nextUseCase = getNextUseCase(useCase.slug);
+        
+        if (nextUseCase) {
+          return (
+            <section className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border border-blue-200 dark:border-blue-800 rounded-2xl p-6">
+              <div className="flex items-center justify-between">
+                <div className="space-y-2">
+                  <h2 className="text-lg font-semibold text-blue-900 dark:text-blue-100">
+                    Continue your analysis
+                  </h2>
+                  <p className="text-sm text-blue-700 dark:text-blue-200">
+                    Explore the next use case to gain comprehensive insights into stablecoin flow patterns.
+                  </p>
+                </div>
+                <Link
+                  to={nextUseCase.route}
+                  className="inline-flex items-center gap-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 text-sm font-semibold transition-colors"
+                >
+                  {nextUseCase.name}
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </div>
+            </section>
+          );
+        }
+        
+        // Last page - show congratulations
+        return (
+          <section className="bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20 border border-emerald-200 dark:border-emerald-800 rounded-2xl p-6">
+            <div className="flex items-center justify-between">
+              <div className="space-y-2">
+                <h2 className="text-lg font-semibold text-emerald-900 dark:text-emerald-100">
+                  Analysis complete
+                </h2>
+                <p className="text-sm text-emerald-700 dark:text-emerald-200">
+                  You have explored the major stablecoin use cases across the public permisionless digital asset ecosystem.
+                </p>
+              </div>
+              <Link
+                to="/"
+                className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 text-sm font-semibold transition-colors"
+              >
+                <Wallet className="h-4 w-4" />
+                Return to Dashboard
+              </Link>
+            </div>
+          </section>
+        );
+      })()}
+
       <section className="rounded-3xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/40 shadow-sm">
         <div className="px-6 py-6">
           <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-700 dark:text-gray-200">Source references</h2>
@@ -235,7 +296,15 @@ export function StaticUseCaseDetail({ useCase }: { useCase: UseCaseDefinition })
                 <span className="h-1.5 w-1.5 rounded-full bg-blue-500 dark:bg-blue-400" />
                 <span>
                   {source.label}
-                  <span className="text-gray-500 dark:text-gray-400"> - {source.url}</span>
+                  <span className="text-gray-500 dark:text-gray-400"> - </span>
+                  <a 
+                    href={source.url} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 underline"
+                  >
+                    {source.url}
+                  </a>
                 </span>
               </li>
             ))}

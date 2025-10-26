@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
-import { Activity, BarChart3, Gauge, Globe } from 'lucide-react';
+import { Activity, BarChart3, Gauge, Globe, ArrowRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { MetricsPanel } from '../../components/MetricsPanel';
 import { SankeyDiagram } from '../../components/SankeyDiagram';
 import { DataTable } from '../../components/DataTable';
@@ -245,6 +246,26 @@ export function DefiProtocolsDetail({
         ))}
       </section>
 
+      <section className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border border-blue-200 dark:border-blue-800 rounded-2xl p-6">
+        <div className="flex items-center justify-between">
+          <div className="space-y-2">
+            <h2 className="text-lg font-semibold text-blue-900 dark:text-blue-100">
+              Continue your analysis
+            </h2>
+            <p className="text-sm text-blue-700 dark:text-blue-200">
+              Explore the next use case to gain comprehensive insights into stablecoin flow patterns.
+            </p>
+          </div>
+          <Link
+            to="/use-cases/centralised-exchanges"
+            className="inline-flex items-center gap-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 text-sm font-semibold transition-colors"
+          >
+            Centralised Exchange Liquidity
+            <ArrowRight className="h-4 w-4" />
+          </Link>
+        </div>
+      </section>
+
       <section className="bg-gray-50 dark:bg-gray-900/40 border border-gray-200 dark:border-gray-700 rounded-2xl p-6">
         <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-700 dark:text-gray-200">Source references</h2>
         <ul className="mt-3 space-y-2 text-sm text-gray-600 dark:text-gray-300">
@@ -253,7 +274,15 @@ export function DefiProtocolsDetail({
               <span className="h-1.5 w-1.5 rounded-full bg-blue-500 dark:bg-blue-400" />
               <span>
                 {source.label}
-                <span className="text-gray-500 dark:text-gray-400"> - {source.url}</span>
+                <span className="text-gray-500 dark:text-gray-400"> - </span>
+                <a 
+                  href={source.url} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 underline"
+                >
+                  {source.url}
+                </a>
               </span>
             </li>
           ))}

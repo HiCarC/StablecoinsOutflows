@@ -87,7 +87,7 @@ export function DashboardPage() {
                 Stablecoin flow intelligence for prudential financial stability
               </h1>
               <p className="text-base md:text-lg text-slate-200 leading-relaxed">
-                The report shows that digital dollars overwhelmingly circulate inside trading
+                The report shows that stablecoins overwhelmingly circulate inside trading
                 infrastructure. DeFi protocol liquidity, centralised exchanges and MEV activity
                 together account for {tradingShare.toFixed(1)} % of observed settlement, while
                 cross-border transfers and payments represent the remaining{' '}
