@@ -212,6 +212,62 @@ export const useCases: UseCaseDefinition[] = [
     icon: 'mev',
   },
   {
+    slug: 'cross-border',
+    name: 'Cross-Border Transfers',
+    route: '/use-cases/cross-border',
+    headline: 'Stablecoins provide near-instant settlement for corridors underserved by traditional correspondent banking networks.',
+    summary:
+      'Cross-border stablecoin transfers account for roughly US$0.7 trillion in annual settlement. Usage spikes when the US dollar appreciates or when capital controls bind, highlighting their role as synthetic dollars for emerging markets.',
+    type: 'static',
+    shareOfVolumePercent: 2.6,
+    annualisedVolumeUsdTrillions: 0.7,
+    highlight: 'Synthetic dollar rails for emerging-market users',
+    insightBullets: [
+      'IMF research finds North America recorded US$633 billion of stablecoin flows in 2024, with net outflows towards Asia-Pacific and other regions.',
+      'BIS monitoring shows quarterly cross-border trading volumes for USDT and USDC topping US$400 billion during USD appreciation phases.',
+      'Regional adoption is highest in LatAm and MEA relative to GDP, signalling use as a hedge against local currency volatility.',
+    ],
+    metrics: [
+      {
+        label: 'Share of tracked volume',
+        value: '2.6 %',
+        context: 'Artemis cross-border classification.',
+      },
+      {
+        label: 'Annualised settlement',
+        value: 'US$0.7 T',
+        context: 'Cross-wallet transfers tagged to remittance corridors.',
+      },
+      {
+        label: 'Regional leaders',
+        value: 'LatAm & Africa',
+        context: 'Flows represent 7.7% and 6.7% of regional GDP respectively (IMF 2025).',
+      },
+    ],
+    narrative: [
+      {
+        title: 'Regulatory perimeter',
+        paragraphs: [
+          'Cross-border stablecoin corridors raise AML/CFT considerations. MICAr is is said to assess VASP licensing, travel-rule compliance and the quality of fiat redemption partners supporting OTC brokers.',
+          'In dollarised regions, authorities balance capital-control objectives with the efficiency gains of programmable cross-border money. Data-sharing frameworks with chain analytics firms help isolate illicit flows.',
+        ],
+      },
+      {
+        title: 'Infrastructure outlook',
+        paragraphs: [
+          'Payment companies are piloting stablecoin settlement networks with on/off-ramps in Asia-Pacific, LatAm and Africa. Partnerships with telecom operators and fintechs can extend reach beyond crypto-native audiences, but regulatory clarity is a prerequisite for scale.',
+        ],
+      },
+    ],
+    sources: [
+      { label: 'IMF Working Paper - Decrypting Crypto (2025)', url: 'imf.org' },
+      { label: 'Bank for International Settlements - Stablecoin monitoring', url: 'bis.org' },
+      { label: 'Artemis Analytics (2025)', url: 'reports.artemisanalytics.com' },
+    ],
+    accentClass: 'from-[#065f46] via-[#047857] to-[#34d399]',
+    icon: 'crossBorder',
+  },
+  {
     slug: 'payments',
     name: 'Payments & Treasury',
     route: '/use-cases/payments',
@@ -274,62 +330,6 @@ export const useCases: UseCaseDefinition[] = [
     ],
     accentClass: 'from-[#13f0a0] via-[#079461] to-[#3aa67b]',
     icon: 'payments',
-  },
-  {
-    slug: 'cross-border',
-    name: 'Cross-Border Transfers',
-    route: '/use-cases/cross-border',
-    headline: 'Stablecoins provide near-instant settlement for corridors underserved by traditional correspondent banking networks.',
-    summary:
-      'Cross-border stablecoin transfers account for roughly US$0.7 trillion in annual settlement. Usage spikes when the US dollar appreciates or when capital controls bind, highlighting their role as synthetic dollars for emerging markets.',
-    type: 'static',
-    shareOfVolumePercent: 2.6,
-    annualisedVolumeUsdTrillions: 0.7,
-    highlight: 'Synthetic dollar rails for emerging-market users',
-    insightBullets: [
-      'IMF research finds North America recorded US$633 billion of stablecoin flows in 2024, with net outflows towards Asia-Pacific and other regions.',
-      'BIS monitoring shows quarterly cross-border trading volumes for USDT and USDC topping US$400 billion during USD appreciation phases.',
-      'Regional adoption is highest in LatAm and MEA relative to GDP, signalling use as a hedge against local currency volatility.',
-    ],
-    metrics: [
-      {
-        label: 'Share of tracked volume',
-        value: '2.6 %',
-        context: 'Artemis cross-border classification.',
-      },
-      {
-        label: 'Annualised settlement',
-        value: 'US$0.7 T',
-        context: 'Cross-wallet transfers tagged to remittance corridors.',
-      },
-      {
-        label: 'Regional leaders',
-        value: 'LatAm & Africa',
-        context: 'Flows represent 7.7% and 6.7% of regional GDP respectively (IMF 2025).',
-      },
-    ],
-    narrative: [
-      {
-        title: 'Regulatory perimeter',
-        paragraphs: [
-          'Cross-border stablecoin corridors raise AML/CFT considerations. MICAr is is said to assess VASP licensing, travel-rule compliance and the quality of fiat redemption partners supporting OTC brokers.',
-          'In dollarised regions, authorities balance capital-control objectives with the efficiency gains of programmable cross-border money. Data-sharing frameworks with chain analytics firms help isolate illicit flows.',
-        ],
-      },
-      {
-        title: 'Infrastructure outlook',
-        paragraphs: [
-          'Payment companies are piloting stablecoin settlement networks with on/off-ramps in Asia-Pacific, LatAm and Africa. Partnerships with telecom operators and fintechs can extend reach beyond crypto-native audiences, but regulatory clarity is a prerequisite for scale.',
-        ],
-      },
-    ],
-    sources: [
-      { label: 'IMF Working Paper - Decrypting Crypto (2025)', url: 'imf.org' },
-      { label: 'Bank for International Settlements - Stablecoin monitoring', url: 'bis.org' },
-      { label: 'Artemis Analytics (2025)', url: 'reports.artemisanalytics.com' },
-    ],
-    accentClass: 'from-[#065f46] via-[#047857] to-[#34d399]',
-    icon: 'crossBorder',
   },
 ];
 
